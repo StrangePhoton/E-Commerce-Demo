@@ -1,11 +1,12 @@
 # Django E-Commerce Platform (Demo)
 
+Originally developed as the Angeles Yaşam e-commerce platform.
 Public demo repository for a full-featured Django e-commerce application.  
 All company names, contact details, legal texts, and customer data are **placeholder/demo values** and safe to publish.
 
 **Live demo target:** `http://localhost:8080`
 
-> **Important:** This repository is a **sanitized demo version** for portfolio and evaluation purposes only. The commercial product was licensed to a client; **all software rights remain with the author**. Unauthorized commercial use, resale, or client deployment is prohibited. See [LICENSE](LICENSE).
+> **Important:** This repository is a **sanitized demo version** for portfolio and evaluation purposes only. The commercial product was licensed to a client; **all software rights remain with the author**. The original client no longer uses this software, and the source code published here is shared with the client's permission. All confidential information, customer-specific data, credentials, branding, and business assets have been removed or replaced with demo content. Unauthorized commercial use, resale, or client deployment is prohibited. See [LICENSE](LICENSE).
 
 ---
 
