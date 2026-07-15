@@ -5,6 +5,8 @@ All company names, contact details, legal texts, and customer data are **placeho
 
 **Live demo target:** `http://localhost:8080`
 
+> **Important:** This repository is a **sanitized demo version** for portfolio and evaluation purposes only. The commercial product was licensed to a client; **all software rights remain with the author**. Unauthorized commercial use, resale, or client deployment is prohibited. See [LICENSE](LICENSE).
+
 ---
 
 ## Features
@@ -238,11 +240,25 @@ git push -u origin main
 
 ## License
 
-This repository is published as a **demo / portfolio project**.  
-Add your preferred license (e.g. MIT) before public release if needed.
+This repository is **not** open source under MIT, Apache, or GPL.
+
+It is published under a **custom demo license** ([LICENSE](LICENSE)) that allows:
+
+- Learning, local testing, and portfolio review
+- Non-commercial personal experimentation
+
+It **does not** allow:
+
+- Commercial use
+- Resale or sublicensing
+- Using the codebase for paid client projects without written permission
+
+All software rights remain with the copyright holder.
 
 ---
 
 ## Disclaimer
 
 This is a demonstration project. Company information, legal texts, bank details, and customer records are fictional. Do not use default credentials or placeholder values in production.
+
+Unauthorized commercial use of this codebase is prohibited. For commercial licensing, contact the repository owner.

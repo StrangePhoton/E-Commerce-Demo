@@ -1,0 +1,32 @@
+Copyright (c) 2026. All rights reserved.
+
+DEMO SOURCE CODE LICENSE
+
+This repository contains a sanitized demonstration version of a commercial
+software product. The full software rights remain with the copyright holder.
+A separate commercial license was granted to a client; this public repository
+is not that deliverable.
+
+Permission is granted to any person obtaining a copy of this repository to:
+
+  - View and study the source code for learning and evaluation
+  - Run the software locally for non-commercial demonstration and portfolio review
+  - Fork the repository only for personal, non-commercial experimentation
+
+The following are expressly prohibited without prior written permission from
+the copyright holder:
+
+  - Commercial use of the software or any substantial portion of its source code
+  - Selling, sublicensing, or offering the software as a product or service
+  - Deploying the software for a live commercial business or paid client project
+  - Removing or altering this license and copyright notice
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+For commercial licensing inquiries, contact the repository owner.
