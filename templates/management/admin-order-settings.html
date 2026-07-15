@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sipariş Ayarları | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --admin-primary: #8E68AB;
+        --admin-secondary: #40C1AC;
+        --bg-light: #f4f7f6;
+        --text-dark: #2d3436;
+    }
+
+    .admin-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: calc(100vh - 90px);
+        background-color: var(--bg-light);
+        align-items: start;
+    }
+
+    .admin-sidebar {
+        background: white;
+        padding: 30px 20px;
+        border-right: 1px solid #eee;
+        min-height: calc(100vh - 90px);
+        height: 100%;
+    }
+
+    .admin-content {
+        padding: 40px;
+    }
+
+    .dashboard-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: var(--text-dark);
+    }
+
+    .settings-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        padding: 40px;
+        border: 1px solid #eee;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--admin-primary);
+        box-shadow: 0 0 0 3px rgba(142, 104, 171, 0.1);
+    }
+
+    .form-help-text {
+        margin-top: 5px;
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-save {
+        background: var(--admin-primary);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-save:hover {
+        background: #764ba2;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(142, 104, 171, 0.3);
+    }
+
+    .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid var(--admin-secondary);
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .info-box h3 {
+        margin: 0 0 10px 0;
+        color: var(--text-dark);
+        font-size: 1.1rem;
+    }
+
+    .info-box p {
+        margin: 5px 0;
+        color: #636e72;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+</style>
+
+<div class="admin-layout">
+    {% include 'includes/admin-sidebar-include.html' %}
+
+    <main class="admin-content">
+        <h1 class="dashboard-title">
+            <i class="fas fa-cog" style="color: var(--admin-primary); margin-right: 10px;"></i>
+            Sipariş Ayarları
+        </h1>
+
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle" style="color: var(--admin-secondary);"></i> Bilgilendirme</h3>
+            <p><strong>Kargo Ücreti:</strong> Sepet tutarı ücretsiz kargo limitinin altındaysa müşterilere uygulanacak kargo ücretidir.</p>
+            <p><strong>Ücretsiz Kargo Limiti:</strong> Sepet tutarı bu limitin üzerinde veya eşit olduğunda kargo ücretsiz olur.</p>
+            <p><strong>Örnek:</strong> Kargo ücreti 100 ₺ ve ücretsiz kargo limiti 1000 ₺ ise, 999 ₺'lik alışverişte 100 ₺ kargo ücreti, 1000 ₺ ve üzeri alışverişlerde kargo ücretsizdir.</p>
+        </div>
+
+        <div class="settings-card">
+            <form method="POST" id="settings-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="shipping_fee">
+                        <i class="fas fa-truck" style="color: var(--admin-primary); margin-right: 5px;"></i>
+                        Kargo Ücreti (₺) <span style="color: #e74c3c;">*</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        id="shipping_fee" 
+                        name="shipping_fee" 
+                        value="{{ order_setting.shipping_fee|floatformat:2 }}" 
+                        step="0.01" 
+                        min="0" 
+                        required
+                        placeholder="Örn: 100.00"
+                    >
+                    <div class="form-help-text">
+                        <i class="fas fa-info-circle"></i>
+                        Sepet tutarı ücretsiz kargo limitinin altındaysa uygulanacak kargo ücreti
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="free_shipping_limit">
+                        <i class="fas fa-gift" style="color: var(--admin-secondary); margin-right: 5px;"></i>
+                        Ücretsiz Kargo Limiti (₺) <span style="color: #e74c3c;">*</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        id="free_shipping_limit" 
+                        name="free_shipping_limit" 
+                        value="{{ order_setting.free_shipping_limit|floatformat:2 }}" 
+                        step="0.01" 
+                        min="0" 
+                        required
+                        placeholder="Örn: 1000.00"
+                    >
+                    <div class="form-help-text">
+                        <i class="fas fa-info-circle"></i>
+                        Sepet tutarı bu limitin üzerinde veya eşit olduğunda kargo ücretsiz olur
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #eee;">
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i>
+                        Ayarları Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script>
+    // Form validation
+    document.getElementById('settings-form').addEventListener('submit', function(e) {
+        const shippingFee = parseFloat(document.getElementById('shipping_fee').value);
+        const freeShippingLimit = parseFloat(document.getElementById('free_shipping_limit').value);
+        
+        if (shippingFee < 0 || freeShippingLimit < 0) {
+            e.preventDefault();
+            alert('Kargo ücreti ve ücretsiz kargo limiti negatif olamaz.');
+            return false;
+        }
+        
+        if (isNaN(shippingFee) || isNaN(freeShippingLimit)) {
+            e.preventDefault();
+            alert('Lütfen geçerli sayısal değerler giriniz.');
+            return false;
+        }
+    });
+</script>
+{% endblock %}

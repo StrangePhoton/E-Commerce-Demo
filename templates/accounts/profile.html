@@ -1,0 +1,1024 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profilim | {{ STORE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --profile-lila: #8e68ab;
+        --profile-turkuaz: #69b3a2;
+        --profile-bg: #f8fafc;
+        --profile-border: #edf2f7;
+        --profile-shadow: 0 10px 25px rgba(142, 104, 171, 0.08);
+        --profile-transition: all 0.3s ease;
+    }
+
+    body {
+        background-color: var(--profile-bg);
+    }
+
+    /* --- GRID FORM ELEMENTS --- */
+    .address-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 Columns */
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 5px;
+    }
+
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1.5px solid #eee;
+        border-radius: 10px;
+        font-size: 0.9rem;
+    }
+
+    /* Address row (textarea) should take full width */
+    .full-width {
+        grid-column: span 2;
+    }
+
+    /* Mobile compatibility */
+    @media (max-width: 600px) {
+        .address-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width {
+            grid-column: span 1;
+        }
+    }
+
+    /* -------------------------- */
+
+    .profile-container {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 30px;
+        max-width: 1300px;
+        margin: 40px auto;
+        padding: 0 20px;
+        align-items: start;
+    }
+
+    /* Left Sidebar */
+    .profile-sidebar {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: var(--profile-shadow);
+        position: sticky;
+        top: 110px;
+        border: 1px solid var(--profile-border);
+    }
+
+    .profile-info {
+        text-align: center;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--profile-bg);
+        margin-bottom: 20px;
+    }
+
+    .user-avatar-circle {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, var(--profile-lila), var(--profile-turkuaz));
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.8rem;
+    }
+
+    .profile-info h3 {
+        color: var(--angeles-text);
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+
+    .profile-info p {
+        color: #888;
+        font-size: 0.85rem;
+    }
+
+    .profile-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .profile-nav a {
+        padding: 12px 15px;
+        border-radius: 12px;
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--profile-transition);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.95rem;
+    }
+
+    .profile-nav a i {
+        font-size: 1rem;
+        width: 20px;
+        opacity: 0.7;
+    }
+
+    .profile-nav a:hover,
+    .profile-nav a.active {
+        background: #fcfaff;
+        color: var(--profile-lila);
+        transform: translateX(5px);
+    }
+
+    .profile-nav a.active {
+        background: var(--profile-lila);
+        color: white;
+    }
+
+    .profile-nav a.active i {
+        opacity: 1;
+    }
+
+    /* Right Content Area */
+    .profile-section {
+        background: white;
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: var(--profile-shadow);
+        margin-bottom: 30px;
+        border: 1px solid var(--profile-border);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-left: 5px solid var(--profile-turkuaz);
+        padding-left: 15px;
+    }
+
+    .section-header h2 {
+        font-size: 1.4rem;
+        color: var(--angeles-text);
+        margin: 0;
+    }
+
+    /* Address Cards */
+    .addresses-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .address-card {
+        border: 1px solid var(--profile-border);
+        border-radius: 15px;
+        padding: 20px;
+        transition: var(--profile-transition);
+        background: #fff;
+    }
+
+    .address-card:hover {
+        border-color: var(--profile-lila);
+        box-shadow: 0 8px 20px rgba(142, 104, 171, 0.1);
+    }
+
+    .address-card h4 {
+        color: var(--profile-lila);
+        font-size: 1rem;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .type-badge {
+        font-size: 0.65rem;
+        background: #f1f5f9;
+        color: #64748b;
+        padding: 3px 8px;
+        border-radius: 6px;
+    }
+
+    .info-box label {
+        color: #94a3b8;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .info-box p {
+        font-weight: 600;
+        color: var(--angeles-text);
+    }
+
+    .btn-primary {
+        background: var(--profile-lila);
+        border: none;
+        color: white;
+        padding: 8px 20px;
+        /* Reduce the height a bit */
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        /* Reduce the font size a bit */
+        cursor: pointer;
+        transition: var(--profile-transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: auto;
+        /* Make the width automatic */
+        min-width: 120px;
+        /* Don't make it too small but don't spread too much */
+        height: fit-content;
+        /* Only as high as the content */
+    }
+
+    /* For the big button on the Favorites page, center it */
+    #favorilerim .btn-primary {
+        min-width: 180px;
+        margin-top: 10px;
+    }
+
+    .btn-outline {
+        border: 1px solid #e2e8f0;
+        background: transparent;
+        color: #64748b;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: var(--profile-transition);
+        font-size: 0.85rem;
+    }
+
+    .btn-outline:hover {
+        border-color: var(--profile-lila);
+        color: var(--profile-lila);
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel-order-profile:hover {
+        background: #ff7675 !important;
+        color: white !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(214, 48, 49, 0.2);
+    }
+
+    /* Form Controls */
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1.5px solid #eee;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: var(--profile-turkuaz);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(105, 179, 162, 0.1);
+    }
+
+    /* For the buttons to be next to each other and have equal width */
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        /* Space between the buttons */
+        margin-top: 20px;
+    }
+
+    .form-actions button {
+        flex: 1;
+        /* Ensure both buttons share the available space equally */
+        justify-content: center;
+        /* Center the icon/text in the content */
+        padding: 12px;
+        /* Increase padding to make it look more饱满 */
+    }
+
+    @media (max-width: 992px) {
+        .profile-container {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-sidebar {
+            position: static;
+        }
+    }
+
+    /* Add to the style block */
+    .hidden-section {
+        display: none !important;
+    }
+
+    .visible-section {
+        display: block !important;
+    }
+
+    #profile-edit-form input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--profile-border);
+        border-radius: 8px;
+        margin-top: 5px;
+        font-size: 0.9rem;
+    }
+
+    #profile-edit-form .info-box {
+        background: #fcfaff;
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    /* Return Status Badges */
+    .status-badge.status-pending { background: #fff8e1; color: #f57f17; }
+    .status-badge.status-approved { background: #e8f5e9; color: #2e7d32; }
+    .status-badge.status-received { background: #e3f2fd; color: #1976d2; }
+    .status-badge.status-rejected { background: #ffebee; color: #c62828; }
+    .status-badge.status-completed { background: #d4edda; color: #155724; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    {% include 'includes/profile-sidebar-include.html' %}
+
+    <main class="profile-content">
+
+        <section class="profile-section" id="profilbilgileri">
+            <div class="section-header">
+                <h2>Profil Bilgileri</h2>
+                <button type="button" class="btn-primary" id="btn-edit-profile">
+                    <i class="fas fa-pen"></i> Telefonu Güncelle
+                </button>
+            </div>
+        
+            <div id="profile-view-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 30px;">
+                <div class="info-box">
+                    <label>TC Kimlik No</label>
+                    <p>
+                        {% if user.tc_kimlik_no %}
+                            {# İlk 2 haneyi al, araya yıldız koy, son 2 haneyi al #}
+                            {{ user.tc_kimlik_no|slice:":2" }}*********{{ user.tc_kimlik_no|slice:"-2:" }}
+                        {% else %}
+                            Belirtilmemiş
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="info-box">
+                    <label>Ad Soyad</label>
+                    <p>{{ user.first_name }} {{ user.last_name }}</p>
+                </div>
+                <div class="info-box">
+                    <label>Doğum Tarihi</label>
+                    <p>{{ user.birth_date|date:"d/m/Y"|default:'Belirtilmemiş' }}</p>
+                </div>
+                <div class="info-box">
+                    <label>Telefon Numarası</label>
+                    <p style="font-weight: 700; color: var(--profile-lila);">
+                        <i class="fas fa-phone-alt" style="font-size: 0.8rem; margin-right: 5px;"></i>
+                        {{ user.phone_number|default:'Belirtilmemiş' }}
+                    </p>
+                </div>
+            </div>
+        
+            <div id="profile-edit-form-container" style="display: none; margin-top: 25px; padding: 20px; background: #fcfaff; border-radius: 15px; border: 1px solid #e2e8f0;">
+                <form method="POST" action="{% url 'update_profile' %}">
+                    {% csrf_token %}
+                    <div style="max-width: 400px;">
+                        <div class="form-group">
+                            <label style="font-weight: 600; margin-bottom: 8px; display: block;">Yeni Telefon Numarası</label>
+                            <input type="text" name="phone_number" value="{{ user.phone_number|default:'' }}" 
+                                   class="form-control" maxlength="11" placeholder="05XXXXXXXXX">
+                            <small style="color: #64748b; display: block; margin-top: 5px;">
+                                Kargo teslimatı ve bilgilendirmeler için gereklidir.
+                            </small>
+                        </div>
+        
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button type="submit" class="btn-primary">Güncelle</button>
+                            <button type="button" class="btn-outline" id="btn-profile-cancel">İptal</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="profile-section" id="siparislerim">
+            <div class="section-header">
+                <h2>Siparişlerim</h2>
+            </div>
+
+            {% if orders %}
+            <div style="display:grid; gap:15px;">
+                {% for order in orders %}
+                <div class="address-card"
+                    style="display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--profile-lila); gap: 20px;">
+
+                    <div style="flex: 1;">
+                        <span class="type-badge"
+                            style="background: var(--profile-lila); color: white; margin-bottom: 5px; display: inline-block;">
+                            Sipariş No: #{{ order.id }}
+                        </span>
+                        <p style="font-weight: 700; font-size: 1.1rem; margin: 5px 0; color: var(--angeles-text);">{{order.total_price }} ₺</p>
+                        <small style="color: #64748b;">
+                            <i class="far fa-calendar-alt"></i> {{ order.created_at|date:"d m Y" }}
+                        </small>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 5px; flex: 2; overflow-x: auto; padding: 5px;">
+                        {% for item in order.items.all|slice:":4" %}
+                        <div style="min-width: 45px; width: 45px; height: 45px; border-radius: 8px; border: 1px solid #edf2f7; overflow: hidden; background: white;"
+                            title="{{ item.product.name }}">
+                            {% if item.product.get_main_image %}
+                            <img src="{{ item.product.get_main_image }}" alt="{{ item.product.name }}"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <img src="{% static STORE_LOGO %}" alt="Yok"
+                                style="width: 100%; height: 100%; object-fit: contain; opacity: 0.5;">
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        {% if order.items.count > 4 %}
+                        <div
+                            style="min-width: 45px; width: 45px; height: 45px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: #64748b; border: 1px dashed #cbd5e1;">
+                            +{{ order.items.count|add:"-4" }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div
+                        style="text-align: right; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; min-width: 120px;">
+                        <span class="status-badge"
+                            style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; background: #f1f5f9; color: var(--profile-turkuaz); border: 1px solid var(--profile-turkuaz); font-weight: 600; white-space: nowrap;">
+                            {{ order.get_status_display }}
+                        </span>
+                        <button class="btn-outline btn-order-detail"
+        style="padding: 4px 12px; font-size: 0.75rem; width: 100%; text-align: center; cursor: pointer;"
+        data-order-id="{{ order.id }}" 
+        data-order-total="{{ order.total_price }}"
+        data-order-status="{{ order.get_status_display }}"
+        data-order-date="{{ order.created_at|date:'d E Y' }}"
+        data-invoice-type="{% if order.invoice_type %}{{ order.get_invoice_type_display }}{% endif %}"
+        data-tax-number="{{ order.tax_number|default:'' }}"
+        data-identity-number="{{ order.invoice_identity_number|default:'' }}"
+        data-billing-address="{% if order.billing_full_name %}{{ order.billing_full_name }}{% if order.billing_phone %}<br>{{ order.billing_phone }}{% endif %}<br>{{ order.billing_address }}<br>{{ order.billing_district }} / {{ order.billing_city|upper }}{% endif %}">
+    Detaylar
+</button>
+                        {% if order.status == 'preparing' or order.status == 'paid' %}
+                        <a href="{% url 'cancel-order-partial' order.id %}" 
+                           class="btn-cancel-order-profile"
+                           style="padding: 4px 12px; font-size: 0.75rem; width: 100%; text-align: center; display: inline-block; text-decoration: none; border-radius: 6px; background: #fff0f0; color: #d63031; border: 1px solid #ffcccc; font-weight: 600; transition: all 0.3s; margin-bottom: 5px;">
+                            <i class="fas fa-clipboard-list"></i> Kısmi İptal
+                        </a>
+                        <a href="{% url 'cancel-order' order.id %}" 
+                           class="btn-cancel-order-profile"
+                           style="padding: 4px 12px; font-size: 0.75rem; width: 100%; text-align: center; display: inline-block; text-decoration: none; border-radius: 6px; background: #fff0f0; color: #d63031; border: 1px solid #ffcccc; font-weight: 600; transition: all 0.3s;">
+                            <i class="fas fa-times-circle"></i> Tam İptal
+                        </a>
+                        {% endif %}
+
+<script type="application/json" id="order-items-{{ order.id }}">
+    [
+        {% for item in order.items.all %}
+        {
+            "name": "{{ item.product.name|escapejs }}",
+            "price": "{{ item.price }}",
+            "qty": "{{ item.quantity }}",
+            "size": "{{ item.size|default:''|escapejs }}",
+            "color": "{{ item.color|default:''|escapejs }}",
+            "image": "{% if item.product.get_main_image %}{{ item.product.get_main_image }}{% else %}/static/images/logo.png{% endif %}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+</script>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 40px; background: #fafafa; border-radius: 15px;">
+                <i class="fas fa-box-open fa-3x" style="color: #cbd5e1; margin-bottom: 15px; display: block;"></i>
+                <p style="color:#94a3b8;">Henüz siparişiniz bulunmuyor.</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <section class="profile-section" id="adreslerim">
+            <div class="section-header">
+                <h2>Adreslerim</h2>
+                <button type="button" class="btn-primary" id="toggle-address-form">
+                    <i class="fas fa-plus"></i> Yeni Adres
+                </button>
+            </div>
+
+            <div class="addresses-list">
+                {% for address in addresses %}
+                <div class="address-wrapper">
+                    <div class="address-card" id="address-view-{{ address.id }}">
+                        <div class="address-details">
+                            <h4
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <span style="font-weight: 700; color: var(--profile-lila);">{{ address.title }}</span>
+                                <span class="type-badge"
+                                    style="background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem;">
+                                    {{ address.get_address_type_display }}
+                                </span>
+                            </h4>
+
+                            <p style="font-size: 0.95rem; color: #334155; font-weight: 600; margin-bottom: 8px;">
+                                {{ address.full_name }}
+                            </p>
+
+                            <p
+                                style="font-size: 0.85rem; color: #64748b; margin-bottom: 5px; display: flex; align-items: flex-start; gap: 8px;">
+                                <i class="fas fa-map-marker-alt"
+                                    style="color: var(--profile-turkuaz); margin-top: 3px;"></i>
+                                <span>{{ address.address_line }}</span>
+                            </p>
+
+                            <p style="font-size: 0.85rem; color: #64748b; margin-left: 20px;">
+                                {{ address.district }} / {{ address.city|upper }}
+                            </p>
+                        </div>
+                        <div
+                            style="margin-top: 15px; display: flex; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+                            <button type="button" class="btn-outline btn-edit-toggle" data-id="{{ address.id }}"
+                                style="flex: 1;">Düzenle</button>
+                            <form method="POST" action="{% url 'delete_address' address.id %}" style="flex: 1;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-outline" style="width:100%; color:#f87171;"
+                                    onclick="return confirm('Bu adresi silmek istediğinize emin misiniz?');">Sil</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="address-card" id="address-edit-{{ address.id }}"
+                        style="display: none; border-color: var(--profile-lila);">
+                        <form method="POST" action="{% url 'edit_address' address.id %}">
+                            {% csrf_token %}
+                            <div class="address-form-grid">
+                                <div class="form-group full-width">
+                                    <input type="text" name="title" value="{{ address.title }}" class="form-control"
+                                        placeholder="Örn: Ev, İşyeri, Yazlık">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" name="full_name" value="{{ address.full_name }}"
+                                        class="form-control" placeholder="Ad Soyad">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" name="phone" value="{{ address.phone }}" class="form-control"
+                                        placeholder="05XX XXX XX XX">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" name="city" value="{{ address.city }}" class="form-control"
+                                        placeholder="Şehir" readonly style="background-color: #f8f9fa;">
+                                    <small style="font-size: 0.7rem; color: #999;">Şehir/İlçe değişikliği için adresi
+                                        silip tekrar ekleyiniz.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" name="district" value="{{ address.district }}"
+                                        class="form-control" placeholder="İlçe" readonly
+                                        style="background-color: #f8f9fa;">
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <textarea name="address_line" class="form-control" rows="2"
+                                        placeholder="Mahalle, sokak, bina ve kapı numarası...">{{ address.address_line }}</textarea>
+                                </div>
+
+                                <input type="hidden" name="country" value="{{ address.country|default:'Türkiye' }}">
+                            </div>
+
+                            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                <button type="submit" class="btn-primary"
+                                    style="flex: 1; min-width: auto;">Kaydet</button>
+                                <button type="button" class="btn-outline btn-cancel-edit" data-id="{{ address.id }}"
+                                    style="flex: 1;">İptal</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #94a3b8;">
+                    <p>Henüz kayıtlı bir adresiniz yok.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div id="new-address-form-container"
+                style="display: none; margin-top: 30px; background: #fcfaff; padding: 25px; border-radius: 15px; border: 1px dashed var(--profile-lila);">
+                <h3 style="margin-bottom: 20px; font-size: 1.1rem; color: var(--profile-lila);">Yeni Adres Ekle</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{address_form.country}}
+
+                    <div class="address-form-grid">
+                        <div class="form-group">
+                            {{ address_form.address_type.label_tag }}
+                            {{ address_form.address_type }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ address_form.title.label_tag }}
+                            {{ address_form.title }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ address_form.full_name.label_tag }}
+                            {{ address_form.full_name }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ address_form.phone.label_tag }}
+                            {{ address_form.phone }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ address_form.city.label_tag }}
+                            {{ address_form.city }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ address_form.district.label_tag }}
+                            {{ address_form.district }}
+                        </div>
+
+                        <div class="form-group full-width">
+                            {{ address_form.address_line.label_tag }}
+                            {{ address_form.address_line }}
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Adresi Kaydet</button>
+                        <button type="button" class="btn-outline" id="cancel-address">Vazgeç</button>
+                    </div>
+
+                    {% if address_form.errors %}
+                    <div style="color: red; margin-bottom: 10px;">
+                        {{ address_form.errors }}
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </section>
+
+        <section class="profile-section" id="favorilerim">
+            <div class="section-header">
+                <h2>Favorilerim</h2>
+            </div>
+
+            {% if favorites %}
+            <div class="addresses-list">
+                {% for fav in favorites %}
+                <div class="address-card"
+                    style="display: flex; flex-direction: column; justify-content: space-between; text-align: center; position: relative;">
+
+                    <form action="{% url 'remove_from_favorites' fav.product.id %}" method="POST"
+                        style="position: absolute; top: 10px; right: 10px; z-index: 2;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-outline"
+                            style="border-radius: 50%; width: 32px; height: 32px; padding: 0; color: #ef4444; border-color: #fee2e2; background: white;"
+                            title="Favorilerden Kaldır">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </form>
+
+                    <div>
+                        <div
+                            style="background: #f8fafc; border-radius: 10px; padding: 15px; margin-bottom: 12px; height: 150px; display: flex; align-items: center; justify-content: center;">
+                            <a href="{% url 'product_detail' fav.product.slug %}">
+                                {% if fav.product.get_main_image %}
+                                <img src="{{ fav.product.get_main_image }}" alt="{{ fav.product.name }}"
+                                    style="max-width: 100%; max-height: 120px; object-fit: contain;">
+                                {% else %}
+                                <img src="{% static STORE_LOGO %}" alt="Resim Yok"
+                                    style="max-width: 100%; max-height: 120px; opacity: 0.5;">
+                                {% endif %}
+                            </a>
+                        </div>
+                        <h4
+                            style="font-size: 0.95rem; margin-bottom: 8px; color: var(--angeles-text); font-weight: 600; min-height: 2.4em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                            {{ fav.product.name }}
+                        </h4>
+                        <p style="font-weight: 700; color: var(--profile-lila); margin-bottom: 15px;">{{fav.product.price }} ₺</p>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <a href="{% url 'product_detail' fav.product.slug %}" class="btn-primary"
+                            style="flex: 1; font-size: 0.8rem;">
+                            <i class="fas fa-eye" style="margin-right: 5px;"></i> İncele
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div
+                style="text-align: center; padding: 50px; background: #fcfaff; border-radius: 20px; border: 1px dashed #e2e8f0;">
+                <i class="far fa-heart fa-3x" style="color: #cbd5e1; margin-bottom: 15px; display: block;"></i>
+                <p style="color: #64748b; margin-bottom: 20px;">Favori listeniz şu an boş.</p>
+                <a href="/" class="btn-primary">Keşfetmeye Başla</a>
+            </div>
+            {% endif %}
+        </section>
+
+        <section class="profile-section" id="iadelerim">
+            <div class="section-header">
+                <h2>İadelerim</h2>
+                <a href="{% url 'return-request-list' %}" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-plus"></i> Yeni İade Talebi
+                </a>
+            </div>
+
+            {% if return_requests %}
+            <div style="display: grid; gap: 20px;">
+                {% for request in return_requests %}
+                <div class="address-card" style="border-left: 4px solid {% if request.status == 'approved' %}#27ae60{% elif request.status == 'received' %}#3498db{% elif request.status == 'rejected' %}#e74c3c{% elif request.status == 'completed' %}#155724{% else %}#f39c12{% endif %};">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 250px;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                {% if request.order_item.product.get_main_image %}
+                                <img src="{{ request.order_item.product.get_main_image }}" 
+                                     alt="{{ request.order_item.product.name }}" 
+                                     style="width: 60px; height: 60px; object-fit: contain; border-radius: 8px; background: #f8f9fa; padding: 5px;">
+                                {% endif %}
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0; color: var(--angeles-text); font-size: 1rem;">
+                                        {{ request.order_item.product.name }}
+                                    </h4>
+                                    <p style="margin: 0; color: #64748b; font-size: 0.85rem;">
+                                        Sipariş #{{ request.order.id }} | {{ request.quantity }} Adet
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 15px;">
+                                <p style="margin: 5px 0; color: #64748b; font-size: 0.9rem;">
+                                    <strong>İade Sebebi:</strong> {{ request.get_reason_display }}
+                                </p>
+                                {% if request.reason_detail %}
+                                <p style="margin: 5px 0; color: #64748b; font-size: 0.85rem;">
+                                    {{ request.reason_detail|truncatewords:20 }}
+                                </p>
+                                {% endif %}
+                                <p style="margin: 5px 0; color: #64748b; font-size: 0.85rem;">
+                                    <i class="far fa-calendar-alt"></i> {{ request.created_at|date:"d F Y, H:i" }}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: right; min-width: 120px;">
+                            <span class="status-badge status-{{ request.status }}" 
+                                  style="padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 10px;">
+                                {{ request.get_status_display }}
+                            </span>
+                            <div>
+                                <a href="{% url 'return-request-list' %}" 
+                                   class="btn-outline" 
+                                   style="padding: 6px 12px; font-size: 0.85rem; text-decoration: none; display: inline-block;">
+                                    <i class="fas fa-eye"></i> Detay
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 12px;">
+                <i class="fas fa-undo" style="font-size: 3rem; color: #ddd; margin-bottom: 15px;"></i>
+                <h3 style="color: #64748b; margin-bottom: 10px;">Henüz iade talebiniz bulunmuyor</h3>
+                <p style="color: #94a3b8; margin-bottom: 20px;">İade talebi oluşturmak için siparişlerinizi kontrol edin.</p>
+                <a href="{% url 'return-request-list' %}" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-plus"></i> İade Talebi Oluştur
+                </a>
+            </div>
+            {% endif %}
+        </section>
+
+    </main>
+    <div id="orderDetailModal"
+    style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;">
+    <div
+        style="background-color: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; position: relative; box-shadow: var(--profile-shadow);">
+        <span id="closeModal"
+            style="position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #64748b;">&times;</span>
+        <h3
+            style="margin-bottom: 20px; color: var(--profile-lila); border-bottom: 2px solid var(--profile-bg); padding-bottom: 10px;">
+            Sipariş Detayı</h3>
+        <div id="modalContent">
+            <p style="text-align: center;">Yükleniyor...</p>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+<script src="{% static 'js/city-district.js' %}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Active sidebar link
+        const links = document.querySelectorAll(".scroll-link");
+        links.forEach(link => {
+            link.addEventListener("click", function () {
+                links.forEach(l => l.classList.remove("active"));
+                this.classList.add("active");
+            });
+        });
+
+        // New address form open/close
+        const toggleBtn = document.getElementById("toggle-address-form");
+        const cancelBtn = document.getElementById("cancel-address");
+        const formContainer = document.getElementById("new-address-form-container");
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener("click", () => {
+                formContainer.style.display = "block";
+                toggleBtn.style.display = "none";
+            });
+        }
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener("click", () => {
+                formContainer.style.display = "none";
+                toggleBtn.style.display = "inline-flex";
+            });
+        }
+
+        // Address edit toggle
+        document.querySelectorAll(".btn-edit-toggle").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.dataset.id;
+                document.getElementById(`address-view-${id}`).style.display = "none";
+                document.getElementById(`address-edit-${id}`).style.display = "block";
+            });
+        });
+
+        document.querySelectorAll(".btn-cancel-edit").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.dataset.id;
+                document.getElementById(`address-edit-${id}`).style.display = "none";
+                document.getElementById(`address-view-${id}`).style.display = "block";
+            });
+        });
+
+    });
+
+    // Profile Edit Toggle
+    const profileEditBtn = document.getElementById("btn-edit-profile");
+    const profileCancelBtn = document.getElementById("btn-profile-cancel");
+    const profileFormContainer = document.getElementById("profile-edit-form-container");
+
+    if (profileEditBtn) {
+        profileEditBtn.addEventListener("click", () => {
+            profileFormContainer.style.display = "block";
+            profileEditBtn.style.display = "none";
+        });
+    }
+    if (profileCancelBtn) {
+        profileCancelBtn.addEventListener("click", () => {
+            profileFormContainer.style.display = "none";
+            profileEditBtn.style.display = "inline-flex";
+        });
+    }
+    const phoneInput = document.querySelector('input[name="phone_number"]');
+
+    if (phoneInput) {
+    // 1. Only allow numbers to be entered
+        phoneInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, ''); // Clean non-numbers
+        });
+
+    // 2. Check the number of digits before submitting the form
+        const profileForm = phoneInput.closest('form');
+        profileForm.addEventListener('submit', function(e) {
+            const val = phoneInput.value;
+            if (val.length > 0 && val.length !== 11) {
+                e.preventDefault(); // Prevent form submission
+                alert('Telefon numarası 05XXXXXXXXX formatında ve tam 11 hane olmalıdır.');
+                phoneInput.style.borderColor = '#e11d48'; // Error highlight
+            } else if (val.length === 11 && !val.startsWith('05')) {
+                e.preventDefault();
+                alert('Telefon numarası "05" ile başlamalıdır.');
+                phoneInput.style.borderColor = '#e11d48';
+            }
+        });
+    }
+
+    document.querySelectorAll('.btn-order-detail').forEach(button => {
+        button.addEventListener('click', function () {
+            const orderId = this.dataset.orderId;
+            const total = this.dataset.orderTotal;
+            const status = this.dataset.orderStatus;
+            const date = this.dataset.orderDate;
+
+            // Get the products from the JSON
+            const items = JSON.parse(document.getElementById(`order-items-${orderId}`).textContent);
+
+            let itemsHtml = `<div style="margin-bottom:15px;">
+            <p><strong>No:</strong> #${orderId} | <strong>Tarih:</strong> ${date}</p>
+            <p><strong>Durum:</strong> <span class="status-badge">${status}</span></p>
+        </div><hr style="border:0; border-top:1px solid #eee; margin:15px 0;">`;
+
+            items.forEach(item => {
+                let variantInfo = '';
+                if (item.size || item.color) {
+                    variantInfo = '<div style="margin-top:5px;">';
+                    if (item.size) variantInfo += `<span style="display:inline-block; padding:3px 8px; background:#f0f0f0; border-radius:5px; font-size:0.75rem; margin-right:5px;"><i class="fas fa-ruler"></i> ${item.size}</span>`;
+                    if (item.color) variantInfo += `<span style="display:inline-block; padding:3px 8px; background:#f0f0f0; border-radius:5px; font-size:0.75rem;"><i class="fas fa-palette"></i> ${item.color}</span>`;
+                    variantInfo += '</div>';
+                }
+                itemsHtml += `
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:12px; padding:10px; background:#f8fafc; border-radius:10px;">
+                    <img src="${item.image}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;">
+                    <div style="flex:1;">
+                        <p style="font-weight:600; margin:0; font-size:0.9rem;">${item.name}</p>
+                        ${variantInfo}
+                        <small style="color:#64748b;">${item.qty} Adet x ${item.price} ₺</small>
+                    </div>
+                </div>`;
+            });
+
+            itemsHtml += `<div style="text-align:right; margin-top:20px; font-size:1.1rem;"><strong>Toplam: ${total} ₺</strong></div>`;
+            
+            // Invoice information (if any)
+            const invoiceType = this.dataset.invoiceType;
+            const taxNumber = this.dataset.taxNumber;
+            const identityNumber = this.dataset.identityNumber;
+            const billingAddress = this.dataset.billingAddress;
+            
+            if (billingAddress || invoiceType || taxNumber || identityNumber) {
+                itemsHtml += `<hr style="border:0; border-top:1px solid #eee; margin:20px 0;">`;
+                itemsHtml += `<div style="margin-top:15px;"><h4 style="margin:0 0 10px 0; color:#2c3e50; font-size:0.95rem;"><i class="fas fa-file-invoice"></i> Fatura Bilgileri</h4>`;
+                
+                if (billingAddress) {
+                    itemsHtml += `<div style="margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #eee;"><span style="color:#64748b; font-size:0.85rem;">Fatura Adresi:</span><br><div style="color:#2c3e50; font-size:0.9rem; margin-top:5px; line-height:1.6;">${billingAddress}</div></div>`;
+                }
+                
+                itemsHtml += `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; font-size:0.85rem;">`;
+                if (invoiceType) {
+                    itemsHtml += `<div><span style="color:#64748b;">Fatura Tipi:</span><br><strong style="color:#2c3e50;">${invoiceType}</strong></div>`;
+                }
+                if (taxNumber) {
+                    itemsHtml += `<div><span style="color:#64748b;">Vergi No:</span><br><strong style="color:#2c3e50;">${taxNumber}</strong></div>`;
+                }
+                if (identityNumber) {
+                    const maskedId = identityNumber.length >= 4 ? identityNumber.substring(0, 2) + '*********' + identityNumber.substring(identityNumber.length - 2) : '***********';
+                    itemsHtml += `<div><span style="color:#64748b;">TC Kimlik No:</span><br><strong style="color:#2c3e50;">${maskedId}</strong></div>`;
+                }
+                itemsHtml += `</div></div>`;
+            }
+
+            document.getElementById('modalContent').innerHTML = itemsHtml;
+            document.getElementById('orderDetailModal').style.display = 'flex';
+        });
+    });
+
+    // Close operation
+    document.getElementById('closeModal').addEventListener('click', () => {
+        document.getElementById('orderDetailModal').style.display = 'none';
+    });
+
+    window.onclick = (event) => {
+        if (event.target == document.getElementById('orderDetailModal')) {
+            document.getElementById('orderDetailModal').style.display = 'none';
+        }
+    };
+</script>
+{% endblock %}

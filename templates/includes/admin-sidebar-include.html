@@ -1,0 +1,61 @@
+<aside class="admin-sidebar">
+    <h2><i class="fas fa-shield-alt"></i> Yönetim</h2>
+    <ul>
+        <li>
+            <a href="{% url 'admin-dashboard' %}" class="{% if request.path == '/yonetim/' or request.path == '/yonetim' %}active{% endif %}">
+                <i class="fas fa-tachometer-alt"></i> Yönetici Panel Ana Sayfa
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'admin-product-list' %}" class="{% if 'product' in request.path and 'kampanya' not in request.path %}active{% endif %}">
+                <i class="fas fa-box"></i> Ürünleri Yönet
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'admin-campaign-list' %}" class="{% if 'kampanya' in request.path %}active{% endif %}">
+                <i class="fas fa-tags"></i> Kampanyalı Ürünleri Yönet
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'admin-home-images' %}" class="{% if 'home-images' in request.path %}active{% endif %}">
+                <i class="fas fa-images"></i> Ana Sayfa Görsellerini Yönet
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'admin-order-list' %}" class="{% if 'order' in request.path and 'return' not in request.path and 'ayarlari' not in request.path %}active{% endif %}">
+                <i class="fas fa-shopping-cart"></i> Siparişleri Gör
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'admin-order-settings' %}" class="{% if 'ayarlari' in request.path %}active{% endif %}">
+                <i class="fas fa-cog"></i> Sipariş Ayarları
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'admin-return-requests' %}" class="{% if 'return' in request.path and 'history' not in request.path %}active{% endif %}">
+                <i class="fas fa-undo"></i> İade Talepleri
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'admin-return-requests-history' %}" class="{% if 'history' in request.path %}active{% endif %}">
+                <i class="fas fa-history"></i> Geçmiş İade Talepleri
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'admin-send-mail' %}" class="{% if 'mail' in request.path %}active{% endif %}">
+                <i class="fas fa-envelope"></i> Müşteriye Mail
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'admin-contact-requests' %}"
+               class="{% if 'mesaj' in request.path %}active{% endif %}">
+                <i class="fas fa-inbox"></i> İletişim Talepleri
+            </a>
+        </li>
+        <li style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+            <a href="{% url 'home' %}" style="color: #e74c3c;">
+                <i class="fas fa-external-link-alt" style="color: #e74c3c;"></i> Siteye Dön
+            </a>
+        </li>
+    </ul>
+</aside>

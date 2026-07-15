@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Kampanya Yönetimi | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --admin-primary: #8e68ab;
+        --admin-secondary: #69b3a2;
+        --admin-text: #3d4c6d;
+        --admin-bg: #f4f7f6;
+        --transition: all 0.3s ease;
+    }
+
+    .admin-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: calc(100vh - 90px);
+        background-color: var(--admin-bg);
+    }
+
+    .admin-content {
+        padding: 40px;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        overflow-x: auto;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+    }
+
+    .admin-table th, .admin-table td {
+        padding: 16px;
+        text-align: left;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f2f6;
+    }
+
+    .admin-table thead th {
+        background-color: #f8f9fa;
+        color: #2f3542;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+
+    .col-product { width: 35%; }
+    .col-quantity { width: 20%; }
+    .col-discount { width: 20%; }
+    .col-action { width: 200px; text-align: right !important; }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .btn-add-campaign {
+        background-color: var(--admin-secondary);
+        color: white !important;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+    }
+
+    .btn-add-campaign:hover {
+        background-color: var(--admin-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(142, 104, 171, 0.2);
+    }
+
+    .btn-edit {
+        background-color: #f3f0f7;
+        color: #8e44ad !important;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .btn-edit:hover { background-color: #8e44ad; color: white !important; }
+
+    .btn-delete-trigger {
+        background-color: #fff5f5;
+        color: #e74c3c !important;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .btn-delete-trigger:hover { background-color: #e74c3c; color: white !important; }
+
+    .discount-badge {
+        background: linear-gradient(135deg, #8E68AB 0%, #69b3a2 100%);
+        color: white;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+
+    .quantity-badge {
+        background: #eef2ff;
+        color: #4834d4;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    /* --- MODAL CSS --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(61, 76, 109, 0.7);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active { display: flex; opacity: 1; }
+
+    .modal-card {
+        background: white;
+        padding: 40px;
+        border-radius: 25px;
+        max-width: 420px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        transform: translateY(30px);
+        transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-card { transform: translateY(0); }
+
+    .modal-icon {
+        width: 80px;
+        height: 80px;
+        background: #fff5f5;
+        color: #e74c3c;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 20px;
+    }
+
+    .modal-title { color: var(--admin-text); font-size: 1.5rem; margin-bottom: 10px; font-weight: 700; }
+    .modal-text { color: #64748b; line-height: 1.6; margin-bottom: 30px; }
+
+    .modal-actions { display: flex; gap: 12px; }
+
+    .btn-modal {
+        flex: 1;
+        padding: 14px;
+        border-radius: 12px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 0.95rem;
+    }
+
+    .btn-modal-cancel { background: #f1f5f9; color: #475569; }
+    .btn-modal-delete { background: #e74c3c; color: white; }
+
+    .btn-modal:hover { transform: translateY(-2px); filter: brightness(0.95); }
+</style>
+
+<div class="admin-layout">
+  {% include 'includes/admin-sidebar-include.html' %}
+  
+  <main class="admin-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: var(--admin-text); font-size: 2rem; margin: 0; font-weight: 700;">Kampanya Yönetimi</h1>
+        <a href="{% url 'admin-campaign-add' %}" class="btn-add-campaign">
+            <i class="fas fa-plus-circle"></i> Yeni Kampanya Ekle
+        </a>
+    </div>
+
+    <div class="table-container">
+        {% if campaigns %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th class="col-product">Ürün</th>
+                    <th class="col-quantity">Minimum Adet</th>
+                    <th class="col-discount">İndirim Oranı</th>
+                    <th class="col-action">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for campaign in campaigns %}
+                <tr>
+                    <td>
+                        <strong style="color: var(--admin-text); font-size: 0.95rem;">{{ campaign.product.name }}</strong>
+                    </td>
+                    <td>
+                        <span class="quantity-badge">{{ campaign.quantity_threshold }} adet ve üzeri</span>
+                    </td>
+                    <td>
+                        <span class="discount-badge">%{{ campaign.discount_percent }} İndirim</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{% url 'admin-campaign-edit' campaign.id %}" class="btn-edit">
+                                <i class="fas fa-pen"></i> Düzenle
+                            </a>
+                            <button type="button" 
+                                    class="btn-delete-trigger" 
+                                    onclick="openCampaignDeleteModal('{% url 'admin-campaign-delete' campaign.id %}', '{{ campaign.product.name|escapejs }}')">
+                                <i class="fas fa-trash-alt"></i> Sil
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="text-align: center; padding: 80px 20px; color: #94a3b8;">
+            <i class="fas fa-tags" style="font-size: 3rem; opacity: 0.2; margin-bottom: 20px;"></i>
+            <h3 style="color: var(--admin-text);">Henüz Kampanya Tanımlanmamış</h3>
+            <a href="{% url 'admin-campaign-add' %}" class="btn-add-campaign" style="margin-top: 20px;">
+                <i class="fas fa-plus"></i> İlk Kampanyayı Ekle
+            </a>
+        </div>
+        {% endif %}
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="campaignDeleteModal">
+    <div class="modal-card">
+        <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h2 class="modal-title">Kampanyayı Sil?</h2>
+        <p class="modal-text">
+            <span id="modalProductName" style="font-weight: 700; color: var(--admin-text);"></span> ürününe ait kampanyayı silmek istediğinizden emin misiniz?
+        </p>
+        <div class="modal-actions">
+            <button class="btn-modal btn-modal-cancel" onclick="closeCampaignDeleteModal()">Vazgeç</button>
+            <button class="btn-modal btn-modal-delete" id="modalConfirmDeleteBtn">Evet, Sil</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deleteUrl = ""; // We will store the delete URL here
+
+    function openCampaignDeleteModal(url, productName) {
+        deleteUrl = url; // Assign the URL generated by Django to the variable
+        document.getElementById('modalProductName').innerText = productName;
+        document.getElementById('campaignDeleteModal').classList.add('active');
+    }
+
+    function closeCampaignDeleteModal() {
+        document.getElementById('campaignDeleteModal').classList.remove('active');
+        deleteUrl = "";
+    }
+
+    document.getElementById('modalConfirmDeleteBtn').addEventListener('click', function() {
+        if (deleteUrl) {
+            window.location.href = deleteUrl; // Go directly to the URL generated by Django to avoid 404
+        }
+    });
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('campaignDeleteModal');
+        if (event.target == modal) closeCampaignDeleteModal();
+    }
+</script>
+{% endblock %}

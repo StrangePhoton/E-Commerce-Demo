@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sipariş Yönetimi | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --admin-primary: #8E68AB;
+        --admin-secondary: #40C1AC;
+        --bg-light: #f4f7f6;
+        --text-dark: #2d3436;
+    }
+
+    /* GRID LAYOUT - Sidebar and Content Side by Side */
+    .admin-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: calc(100vh - 90px);
+        background-color: var(--bg-light);
+        align-items: start;
+    }
+
+    /* Sidebar Fixed Area */
+    .admin-sidebar {
+        background: white;
+        padding: 30px 20px;
+        border-right: 1px solid #eee;
+        min-height: calc(100vh - 90px);
+        height: 100%;
+    }
+
+    /* Content Area */
+    .admin-content { padding: 40px; }
+    .dashboard-title { 
+        font-size: 1.8rem; 
+        font-weight: 700; 
+        margin-bottom: 30px; 
+        color: var(--text-dark); 
+    }
+
+    /* Table Design */
+    .table-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        overflow: hidden;
+        border: 1px solid #eee;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .admin-table th {
+        background: #fafafa;
+        padding: 15px 20px;
+        font-weight: 600;
+        color: #7f8c8d;
+        border-bottom: 2px solid #f0f0f0;
+        font-size: 0.9rem;
+    }
+
+    .admin-table td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    .order-items-list {
+        padding: 0;
+        margin: 5px 0 0 0;
+        list-style: none;
+        font-size: 0.8rem;
+        color: #636e72;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    .status-shipped { background: #e3f2fd; color: #1976d2; }
+    .status-completed { background: #e8f5e9; color: #2e7d32; }
+    .status-pending { background: #fff8e1; color: #f57f17; }
+    .status-default { background: #f5f5f5; color: #666; }
+
+    /* Buttons */
+    .admin-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .btn-action {
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-update { background: #f3f0f7; color: var(--admin-primary); border-color: #efe6f7; }
+    .btn-update:hover { background: var(--admin-primary); color: white; }
+
+    .btn-contracts { background: #f0faf9; color: var(--admin-secondary); border-color: #d1f2ed; }
+    .btn-contracts:hover { background: var(--admin-secondary); color: white; }
+
+    .btn-invoice { background: #2d3436; color: white; }
+    .btn-invoice:hover { background: #000; }
+
+    /* Modal Window */
+    .modal {
+        position: fixed;
+        z-index: 2000;
+        left: 0; top: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 30px;
+        width: 100%;
+        max-width: 400px;
+        border-radius: 20px;
+        position: relative;
+    }
+
+    #orderStatusSelect {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        margin: 15px 0;
+    }
+
+    .btn-save {
+        width: 100%;
+        background: var(--admin-primary);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
+<div class="admin-layout">
+    {% include 'includes/admin-sidebar-include.html' %}
+
+    <main class="admin-content">
+        <h1 class="dashboard-title">Sipariş Yönetimi</h1>
+
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Müşteri</th>
+                        <th>Toplam</th>
+                        <th>Durum</th>
+                        <th>Tarih</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr id="order-row-{{ order.id }}">
+                        <td><strong>#{{ order.id }}</strong></td>
+                        <td>
+                            <div style="font-weight: 600;">{{ order.user.get_full_name|default:order.user.email }}</div>
+                            <ul class="order-items-list">
+                                {% for item in order.items.all %}
+                                <li>{{ item.product.name }} (x{{ item.quantity }})</li>
+                                {% endfor %}
+                            </ul>
+                            {% if order.billing_full_name or order.invoice_type or order.tax_number or order.invoice_identity_number %}
+                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+                                {% if order.billing_full_name %}
+                                <small style="color: #636e72; display: block; margin-bottom: 4px;">
+                                    <i class="fas fa-map-marker-alt"></i> Fatura Adresi: {{ order.billing_full_name }}, {{ order.billing_district }}/{{ order.billing_city }}
+                                </small>
+                                {% endif %}
+                                {% if order.invoice_type or order.tax_number or order.invoice_identity_number %}
+                                <small style="color: #8e68ab; font-weight: 600;">
+                                    <i class="fas fa-file-invoice"></i> Fatura: 
+                                    {{ order.get_invoice_type_display }}
+                                    {% if order.tax_number %} | VN: {{ order.tax_number }}{% endif %}
+                                    {% if order.invoice_identity_number %} | TC: {{ order.invoice_identity_number|slice:":2" }}***{{ order.invoice_identity_number|slice:"-2:" }}{% endif %}
+                                </small>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td><span style="font-weight: 700; color: var(--admin-primary);">{{ order.total_price|floatformat:2 }} ₺</span></td>
+                        <td class="status-cell">
+                            <span class="status-badge 
+                                {% if order.status == 'shipped' %}status-shipped
+                                {% elif order.status == 'completed' %}status-completed
+                                {% elif order.status == 'pending' %}status-pending
+                                {% else %}status-default{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="color: #95a5a6;">
+                            {{ order.created_at|date:"d/m/Y" }}<br>
+                            <small>{{ order.created_at|date:"H:i" }}</small>
+                        </td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="btn-action btn-update" onclick="openModal('{{ order.id }}', '{{ order.get_status_display }}')">
+                                    <i class="fas fa-sync-alt"></i> Durum
+                                </button>
+                                <a href="{% url 'admin-order-contracts' order.id %}" class="btn-action btn-contracts">
+                                    <i class="fas fa-file-signature"></i> Sözleşme
+                                </a>
+                                <a href="{% url 'admin-generate-invoice' order.id %}" class="btn-action btn-invoice">
+                                    <i class="fas fa-file-invoice"></i> Fatura
+                                </a>
+                                {% if order.status == 'preparing' or order.status == 'paid' %}
+                                    <a href="{% url 'cancel-order-partial' order.id %}" class="btn-action btn-cancel" style="background: #f39c12; color: white; margin-right: 5px;">
+                                        <i class="fas fa-clipboard-list"></i> Kısmi İptal
+                                    </a>
+                                    <a href="{% url 'cancel-order' order.id %}" class="btn-action btn-cancel" style="background: #d63031; color: white;">
+                                        <i class="fas fa-times-circle"></i> Tam İptal
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" style="text-align: center; padding: 50px; color: #999;">Henüz sipariş bulunmuyor.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="orderModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()" style="position: absolute; right: 20px; top: 20px; cursor: pointer; font-size: 1.5rem;">&times;</span>
+        <h2 style="color: var(--admin-primary); font-size: 1.4rem;">Durum Güncelle</h2>
+        <form id="updateOrderForm">
+            <input type="hidden" name="order_id" id="modalOrderId">
+            <label style="display: block; margin-top: 10px; font-size: 0.9rem; color: #666;">Yeni Durum Belirleyin:</label>
+            <select name="status" id="orderStatusSelect" required>
+                <option value="">Seçiniz...</option>
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-save">Değişiklikleri Kaydet</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function openModal(orderId, currentStatus) {
+    document.getElementById("modalOrderId").value = orderId;
+    const select = document.getElementById("orderStatusSelect");
+    for (let option of select.options) {
+        if (option.text === currentStatus) {
+            option.selected = true;
+            break;
+        }
+    }
+    document.getElementById("orderModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("orderModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById("orderModal")) {
+        closeModal();
+    }
+}
+
+document.getElementById("updateOrderForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const orderId = document.getElementById("modalOrderId").value;
+    const statusSelect = document.getElementById("orderStatusSelect");
+    const statusText = statusSelect.options[statusSelect.selectedIndex].text;
+    const statusValue = statusSelect.value;
+
+    fetch(`/yonetim/siparis/${orderId}/guncelle/ajax/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({ status: statusValue })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const row = document.querySelector(`#order-row-${orderId}`);
+            const cell = row.querySelector(".status-cell");
+            
+            let badgeClass = "status-badge";
+            if(statusValue === 'shipped') badgeClass += " status-shipped";
+            else if(statusValue === 'completed') badgeClass += " status-completed";
+            else if(statusValue === 'pending') badgeClass += " status-pending";
+            else badgeClass += " status-default";
+
+            cell.innerHTML = `<span class="${badgeClass}">${statusText}</span>`;
+            closeModal();
+        } else {
+            alert("Güncelleme başarısız oldu.");
+        }
+    });
+});
+</script>
+{% endblock %}

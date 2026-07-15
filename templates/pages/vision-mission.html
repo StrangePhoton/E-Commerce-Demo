@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vizyon ve Misyon | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<main class="page-content">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Ana Sayfa</a> <i class="fas fa-chevron-right" style="font-size: 10px; margin: 0 8px; opacity: 0.5;"></i>
+            <span>Vizyon ve Misyon</span>
+        </div>
+
+        <div class="corporate-hero">
+            <h1 class="page-title">Geleceğe Sağlıkla Bakıyoruz</h1>
+            <p class="hero-subtitle">{{ STORE_NAME }} olarak sadece ürün satmıyor, yaşam kalitenizi artırmak için değer üretiyoruz.</p>
+        </div>
+
+        <div class="content-section no-border shadow-sm">
+            <div class="vision-mission-wrapper">
+                <section class="mission-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h2>Misyonumuz</h2>
+                    </div>
+                    <div class="section-content">
+                        <p>{{ STORE_NAME }} olarak temel amacımız, toplumun her kesiminin yüksek kaliteli medikal ve sağlık ürünlerine en güvenilir yoldan ulaşmasını sağlamaktır. Sağlıkta sürdürülebilir kaliteyi, erişilebilir fiyatlarla buluşturuyoruz.</p>
+                        
+                        <ul class="styled-list">
+                            <li><i class="fas fa-check-circle"></i> <strong>Müşteri Odaklılık:</strong> İhtiyaçlarınıza özel çözümler.</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Güvenilirlik:</strong> Şeffaf ve dürüst hizmet anlayışı.</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Erişilebilirlik:</strong> Türkiye'nin her noktasına hızlı sağlık çözümü.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="vision-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h2>Vizyonumuz</h2>
+                    </div>
+                    <div class="section-content">
+                        <p>Dijital dönüşümü sağlık sektörüyle en efektif şekilde harmanlayarak, Türkiye’nin en çok güvenilen ve tercih edilen medikal e-ticaret ekosistemi olmak; sağlıkta "kalite" denince akla gelen ilk marka konumuna yükselmek.</p>
+                        
+                        <ul class="styled-list">
+                            <li><i class="fas fa-star"></i> <strong>Dijital Liderlik:</strong> Teknolojik ve inovatif altyapı.</li>
+                            <li><i class="fas fa-star"></i> <strong>Sektörel Öncülük:</strong> Standartları belirleyen hizmet kalitesi.</li>
+                            <li><i class="fas fa-star"></i> <strong>Global Standart:</strong> Dünya çapında kabul görmüş hizmet modeli.</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+            <section class="values-section">
+                <div class="values-header">
+                    <h2>Bizi Biz Yapan Değerlerimiz</h2>
+                    <div class="title-line"></div>
+                </div>
+                
+                <div class="values-grid">
+                    <div class="value-card">
+                        <div class="card-icon"><i class="fas fa-heart"></i></div>
+                        <h3>İnsan Odaklılık</h3>
+                        <p>Her adımımızda insan sağlığını ve mutluluğunu merkeze alıyoruz.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h3>Etik Değerler</h3>
+                        <p>Tıbbi etik kurallarına ve yasal mevzuata tam uyumla çalışıyoruz.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="card-icon"><i class="fas fa-lightbulb"></i></div>
+                        <h3>Sürekli Gelişim</h3>
+                        <p>Yenilikleri takip ediyor, kendimizi her gün bir adım ileri taşıyoruz.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="card-icon"><i class="fas fa-handshake"></i></div>
+                        <h3>Dürüstlük</h3>
+                        <p>Tüm iş süreçlerimizde şeffaflık ve dürüstlükten ödün vermiyoruz.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<style>
+:root {
+    --angeles-lila: #8E68AB;
+    --angeles-turkuaz: #40C1AC;
+}
+
+.page-content { padding: 60px 0; background-color: #fdfbff; font-family: 'Poppins', sans-serif; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* Breadcrumb */
+.breadcrumb { margin-bottom: 30px; font-size: 0.9rem; color: #888; }
+.breadcrumb a { color: var(--angeles-lila); text-decoration: none; font-weight: 500; }
+
+/* Hero */
+.corporate-hero { text-align: center; margin-bottom: 50px; }
+.corporate-hero h1 { font-size: 38px; color: #333; font-weight: 700; margin-bottom: 15px; }
+.hero-subtitle { color: #777; font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
+
+/* Wrapper */
+.content-section { background: #fff; padding: 50px; border-radius: 30px; }
+.vision-mission-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+
+/* Mission & Vision Sections */
+.mission-section, .vision-section { 
+    padding: 35px; 
+    border-radius: 20px; 
+    background: #f9f9fb; 
+    transition: transform 0.3s;
+    border: 1px solid transparent;
+}
+.mission-section:hover, .vision-section:hover { transform: translateY(-5px); border-color: rgba(142,104,171,0.2); }
+
+.section-header { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; }
+.section-icon { 
+    width: 60px; height: 60px; 
+    background: white; 
+    border-radius: 15px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 28px; 
+    color: var(--angeles-lila);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+.vision-section .section-icon { color: var(--angeles-turkuaz); }
+.section-header h2 { font-size: 24px; font-weight: 700; margin: 0; color: #333; }
+
+.section-content p { line-height: 1.8; color: #666; margin-bottom: 25px; }
+
+.styled-list { list-style: none; padding: 0; }
+.styled-list li { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: #555; }
+.styled-list i { color: var(--angeles-turkuaz); }
+
+/* Values */
+.values-header { text-align: center; margin-bottom: 40px; }
+.values-header h2 { font-size: 28px; font-weight: 700; color: #333; }
+.title-line { width: 60px; height: 4px; background: var(--angeles-lila); margin: 15px auto; border-radius: 2px; }
+
+.values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
+.value-card { 
+    text-align: center; 
+    padding: 30px 20px; 
+    border-radius: 20px; 
+    background: #fff; 
+    border: 1px solid #f0f0f0;
+    transition: 0.3s;
+}
+.value-card:hover { box-shadow: 0 15px 30px rgba(142,104,171,0.1); }
+.card-icon { font-size: 40px; color: var(--angeles-lila); margin-bottom: 20px; }
+.value-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: #333; }
+.value-card p { font-size: 0.85rem; color: #777; line-height: 1.6; }
+
+@media (max-width: 868px) {
+    .vision-mission-wrapper { grid-template-columns: 1fr; }
+    .content-section { padding: 30px 20px; }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Garanti ve İade Koşulları | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<main class="page-content">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Ana Sayfa</a> <i class="fas fa-chevron-right" style="font-size: 10px; margin: 0 8px; opacity: 0.5;"></i>
+            <span>Garanti ve İade</span>
+        </div>
+
+        <div class="page-header-alt">
+            <h1 class="page-title">Garanti ve İade Politikası</h1>
+            <p>Satın aldığınız medikal ürünlerin güvencesi ve iade süreçleri hakkında detaylı bilgiler.</p>
+        </div>
+
+        <div class="content-wrapper shadow-sm">
+            
+            <section class="policy-card warranty-bg">
+                <div class="card-title">
+                    <i class="fas fa-shield-alt"></i>
+                    <h2>Garanti ve Teknik Servis</h2>
+                </div>
+                <div class="card-body">
+                    <p>{{ STORE_NAME }} üzerinden temin ettiğiniz tüm elektronik medikal cihazlar (Tansiyon aletleri, Nebulizatörler, Şeker Ölçüm Cihazları vb.) en az <strong>2 yıl üretici veya ithalatçı garantisi</strong> altındadır.</p>
+                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4><i class="fas fa-file-invoice"></i> Garanti Belgesi</h4>
+                            <p>Ürün kutusundan çıkan garanti belgesi ve faturanız, garanti sürecinin başlatılması için zorunludur.</p>
+                        </div>
+                        <div class="info-item">
+                            <h4><i class="fas fa-tools"></i> Yetkili Servis</h4>
+                            <p>Arıza durumunda ürünler, doğrudan markanın yetkili teknik servislerine veya tarafımız aracılığıyla servise yönlendirilir.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="policy-card return-bg">
+                <div class="card-title">
+                    <i class="fas fa-undo-alt"></i>
+                    <h2>İade ve Değişim Şartları</h2>
+                </div>
+                <div class="card-body">
+                    <div class="law-alert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p><strong>Önemli Yasal Uyarı:</strong> 6502 sayılı Kanun ve Mesafeli Sözleşmeler Yönetmeliği gereği; <u>tesliminden sonra ambalajı, bandı, mührü veya paketi açılmış olan</u> ve iadesi sağlık/hijyen açısından uygun olmayan ürünlerde cayma hakkı kullanılamaz.</p>
+                    </div>
+
+                    <div class="return-rules">
+                        <div class="rule-box">
+                            <h3>İade Edilebilen Ürünler</h3>
+                            <ul>
+                                <li>Ambalajı ve koruma bandı hiç açılmamış ürünler.</li>
+                                <li>Kutusu hasar görmemiş, tekrar satılabilirliği bozulmamış cihazlar.</li>
+                                <li>Teslimat tarihinden itibaren 14 günü geçmemiş talepler.</li>
+                            </ul>
+                        </div>
+                        <div class="rule-box warning">
+                            <h3>İade Edilemeyen Ürünler</h3>
+                            <ul>
+                                <li>Paketi açılmış maskeler, enjektörler, steril sarf malzemeleri.</li>
+                                <li>Hijyenik koruma bandı sökülmüş kişisel bakım ürünleri.</li>
+                                <li>Kullanılmış veya tenle temas etmiş medikal tekstil ürünleri.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="process-steps">
+                <h2>İade Süreci Nasıl İşler?</h2>
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-icon">1</div>
+                        <p>Destek ekibimizle iletişime geçin.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">2</div>
+                        <p>Ürünü orijinal kutusu ve faturasıyla paketleyin.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">3</div>
+                        <p>Anlaşmalı kargo koduyla gönderimi sağlayın.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">4</div>
+                        <p>Kontrol sonrası 7-10 iş günü içinde iadenizi alın.</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="contact-footer-box">
+                <div class="footer-info">
+                    <h3>Sorunuz mu var?</h3>
+                    <p>Garanti süreçleri veya teknik servis adresleri için bize ulaşın.</p>
+                </div>
+                <div class="footer-actions">
+                    <a href="mailto:{{ STORE_EMAIL }}" class="btn-contact"><i class="fas fa-envelope"></i> {{ STORE_EMAIL }}</a>
+                    <a href="tel:{{ STORE_PHONE_TEL }}" class="btn-contact"><i class="fas fa-phone"></i> {{ STORE_PHONE }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+:root {
+    --angeles-lila: #8E68AB;
+    --angeles-turkuaz: #40C1AC;
+}
+
+.page-content { padding: 60px 0; background: #fdfbff; font-family: 'Poppins', sans-serif; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* Header */
+.page-header-alt { text-align: center; margin-bottom: 50px; }
+.page-title { font-size: 32px; color: #333; font-weight: 700; margin-bottom: 10px; }
+.page-header-alt p { color: #777; font-size: 1.1rem; }
+
+/* Content Wrapper */
+.content-wrapper { background: #fff; padding: 40px; border-radius: 25px; }
+
+/* Policy Cards */
+.policy-card { margin-bottom: 40px; border-radius: 20px; border: 1px solid #f0f0f0; overflow: hidden; }
+.card-title { background: #fcfaff; padding: 20px 30px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #f0f0f0; }
+.card-title i { font-size: 24px; color: var(--angeles-lila); }
+.card-title h2 { font-size: 1.25rem; margin: 0; color: #333; font-weight: 600; }
+.card-body { padding: 30px; }
+
+/* Info Grid */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 25px; }
+.info-item h4 { font-size: 1rem; color: var(--angeles-lila); margin-bottom: 10px; }
+.info-item p { font-size: 0.9rem; color: #666; line-height: 1.6; }
+
+/* Law Alert */
+.law-alert { background: #fff5f5; border-left: 4px solid #ff4d4d; padding: 20px; border-radius: 10px; display: flex; gap: 15px; margin-bottom: 30px; }
+.law-alert i { color: #ff4d4d; font-size: 20px; margin-top: 3px; }
+.law-alert p { margin: 0; font-size: 0.9rem; color: #444; line-height: 1.5; }
+
+/* Return Rules */
+.return-rules { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.rule-box { background: #f9fdfc; padding: 25px; border-radius: 15px; border: 1px solid #e0f2ef; }
+.rule-box.warning { background: #fffaf9; border-color: #fbe9e7; }
+.rule-box h3 { font-size: 1rem; margin-bottom: 15px; color: #333; }
+.rule-box ul { padding-left: 20px; margin: 0; }
+.rule-box li { font-size: 0.85rem; color: #555; margin-bottom: 8px; line-height: 1.4; }
+
+/* Steps */
+.process-steps { text-align: center; margin: 60px 0; }
+.process-steps h2 { font-size: 1.5rem; margin-bottom: 40px; color: var(--angeles-lila); }
+.steps-container { display: flex; justify-content: space-between; gap: 20px; }
+.step { flex: 1; position: relative; }
+.step-icon { width: 40px; height: 40px; background: var(--angeles-turkuaz); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 700; }
+.step p { font-size: 0.85rem; color: #666; font-weight: 500; }
+
+/* Contact Box */
+.contact-footer-box { background: linear-gradient(135deg, var(--angeles-lila) 0%, #764b96 100%); padding: 40px; border-radius: 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
+.footer-info h3 { font-size: 1.5rem; margin-bottom: 10px; }
+.footer-info p { opacity: 0.9; }
+.footer-actions { display: flex; gap: 15px; }
+.btn-contact { background: rgba(255,255,255,0.1); color: white; padding: 12px 25px; border-radius: 50px; text-decoration: none; font-size: 0.9rem; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2); }
+.btn-contact:hover { background: white; color: var(--angeles-lila); }
+
+@media (max-width: 868px) {
+    .info-grid, .return-rules, .steps-container { grid-template-columns: 1fr; flex-direction: column; }
+    .contact-footer-box { flex-direction: column; text-align: center; gap: 30px; }
+    .footer-actions { flex-direction: column; width: 100%; }
+}
+</style>
+{% endblock %}

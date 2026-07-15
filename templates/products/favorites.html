@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Favorilerim{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Favorilerim</h1>
+  <div class="product-grid">
+    {% for fav in favorites %}
+      <div class="product-card">
+        <a href="{% url 'product_detail' fav.product.slug %}">
+          <div class="product-image">
+            <img src="{{ fav.product.image.url }}" alt="{{ fav.product.name }}">
+            {% if fav.product.bulk_discounts.exists %}
+              <span class="free-shipping">Kampanya</span>
+            {% endif %}
+          </div>
+          <div class="product-info">
+            <h3>{{ fav.product.name }}</h3>
+            {% if user.is_authenticated %}
+              <p class="price">{{ fav.product.price|floatformat:2 }} ₺</p>
+            {% else %}
+              <p class="price">Giriş yapınız</p>
+            {% endif %}
+          </div>
+        </a>
+        <div class="card-buttons">
+          <a href="{% url 'add_to_cart' fav.product.id %}" class="add-to-cart">Sepete Ekle</a>
+          <a href="{% url 'remove_from_favorites' fav.product.id %}" class="btn-delete">Favorilerden Kaldır</a>
+        </div>
+      </div>
+    {% empty %}
+      <p>Henüz favori ürününüz yok.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Hesap Aktivasyonu</title>
+</head>
+<body>
+    <h2>Merhaba {{ user.first_name|default:user.email }}</h2>
+
+    <p>
+        {{ STORE_NAME }} hesabınızı aktifleştirmek için aşağıdaki bağlantıya tıklayın:
+    </p>
+
+    <p>
+        <a href="{{ activation_link }}">
+            Hesabımı Aktifleştir
+        </a>
+    </p>
+
+    <br>
+
+    <p>
+        Eğer bu işlemi siz yapmadıysanız, bu maili dikkate almayınız.
+    </p>
+
+    <hr>
+
+    <small>
+        {{ STORE_NAME }}
+    </small>
+</body>
+</html>

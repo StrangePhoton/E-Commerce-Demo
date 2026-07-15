@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Kısmi Sipariş İptal | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<main style="padding: 40px 0; background: #fcfaff; min-height: 80vh;">
+    <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
+        <nav class="breadcrumb-nav" style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #636e72; margin-bottom: 25px;">
+            <a href="{% url 'home' %}" style="color: #8e68ab; text-decoration: none;">Ana Sayfa</a>
+            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+            <a href="{% url 'order-tracking' %}" style="color: #8e68ab; text-decoration: none;">Siparişlerim</a>
+            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+            <span>Kısmi İptal</span>
+        </nav>
+
+        <div class="card" style="background: white; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 30px;">
+            <h1 style="font-size: 1.8rem; color: #2d3436; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-clipboard-list" style="color: #d63031;"></i>
+                Kısmi Sipariş İptali
+            </h1>
+            <p style="color: #636e72; margin-bottom: 25px;">Sipariş #{{ order.id }} - İptal edilecek ürünleri seçin</p>
+
+            <div class="order-info" style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #636e72;">Sipariş No:</span>
+                    <strong>#{{ order.id }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #636e72;">Tarih:</span>
+                    <strong>{{ order.created_at|date:"d F Y, H:i" }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #636e72;">Toplam:</span>
+                    <strong style="color: #00b894;">{{ order.total_price|floatformat:2 }} ₺</strong>
+                </div>
+            </div>
+
+            <form method="POST" id="cancel-form" style="margin-top: 25px;">
+                {% csrf_token %}
+                
+                <div style="margin-bottom: 25px;">
+                    <h2 style="font-size: 1.3rem; color: #2d3436; margin-bottom: 15px;">
+                        <i class="fas fa-shopping-bag"></i> Ürünler
+                    </h2>
+                    
+                    <div style="display: grid; gap: 15px;">
+                        {% for item in order.items.all %}
+                        <div class="product-item" style="border: 2px solid {% if item.is_fully_cancelled %}#e9ecef{% else %}#dee2e6{% endif %}; border-radius: 12px; padding: 20px; background: {% if item.is_fully_cancelled %}#f8f9fa{% else %}#fff{% endif %};">
+                            <div style="display: flex; gap: 15px; align-items: flex-start;">
+                                {% if item.product.get_main_image %}
+                                <img src="{{ item.product.get_main_image }}" alt="{{ item.product.name }}" 
+                                     style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: white; padding: 5px; border: 1px solid #dee2e6;">
+                                {% endif %}
+                                
+                                <div style="flex: 1;">
+                                    <h3 style="margin: 0 0 8px 0; color: #2d3436; font-size: 1.1rem;">
+                                        {{ item.product.name }}
+                                        {% if item.is_fully_cancelled %}
+                                        <span style="background: #d63031; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 8px;">Tamamen İptal Edildi</span>
+                                        {% endif %}
+                                    </h3>
+                                    
+                                    {% if item.size or item.color %}
+                                    <p style="margin: 0 0 8px 0; color: #636e72; font-size: 0.9rem;">
+                                        {% if item.size %}<strong>Beden:</strong> {{ item.size }}{% endif %}
+                                        {% if item.size and item.color %} | {% endif %}
+                                        {% if item.color %}<strong>Renk:</strong> {{ item.color }}{% endif %}
+                                    </p>
+                                    {% endif %}
+                                    
+                                    <div style="display: flex; gap: 20px; margin-top: 10px; font-size: 0.9rem;">
+                                        <div>
+                                            <span style="color: #636e72;">Birim Fiyat:</span>
+                                            <strong style="color: #2d3436;">{{ item.price|floatformat:2 }} ₺</strong>
+                                        </div>
+                                        <div>
+                                            <span style="color: #636e72;">Toplam Miktar:</span>
+                                            <strong style="color: #2d3436;">{{ item.quantity }} Adet</strong>
+                                        </div>
+                                        {% if item.cancelled_quantity > 0 %}
+                                        <div>
+                                            <span style="color: #d63031;">İptal Edilen:</span>
+                                            <strong style="color: #d63031;">{{ item.cancelled_quantity }} Adet</strong>
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <span style="color: #00b894;">İptal Edilebilir:</span>
+                                            <strong style="color: #00b894;">{{ item.active_quantity }} Adet</strong>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if not item.is_fully_cancelled %}
+                                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+                                        <label for="cancel_quantity_{{ item.id }}" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436; font-size: 0.9rem;">
+                                            İptal Edilecek Miktar:
+                                        </label>
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <input 
+                                                type="number" 
+                                                id="cancel_quantity_{{ item.id }}" 
+                                                name="cancel_quantity_{{ item.id }}" 
+                                                min="0" 
+                                                max="{{ item.active_quantity }}"
+                                                value="0"
+                                                class="cancel-quantity-input"
+                                                data-item-id="{{ item.id }}"
+                                                data-max="{{ item.active_quantity }}"
+                                                style="width: 100px; padding: 8px 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1rem; text-align: center;"
+                                            >
+                                            <span style="color: #636e72; font-size: 0.9rem;">
+                                                / {{ item.active_quantity }} adet
+                                            </span>
+                                            <button type="button" class="btn-max" data-item-id="{{ item.id }}" 
+                                                    style="padding: 6px 12px; background: #8e68ab; color: white; border: none; border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: 0.3s;">
+                                                Maksimum
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 8px; color: #856404; font-size: 0.9rem;">
+                                        <i class="fas fa-info-circle"></i> Bu ürün tamamen iptal edilmiş.
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p style="text-align: center; color: #636e72; padding: 20px;">Bu siparişte ürün bulunmamaktadır.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="cancellation_reason" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436;">
+                        İptal Sebebi (Opsiyonel)
+                    </label>
+                    <textarea 
+                        id="cancellation_reason" 
+                        name="cancellation_reason" 
+                        rows="3" 
+                        placeholder="İptal sebebinizi belirtiniz (opsiyonel)..."
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical;"
+                    ></textarea>
+                </div>
+
+                <div class="legal-notice" style="background: #e8f4f8; border: 2px solid #3498db; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                    <h3 style="color: #2c3e50; font-size: 1rem; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-gavel" style="color: #3498db;"></i>
+                        Önemli Hukuki Bilgilendirme
+                    </h3>
+                    <div style="color: #2c3e50; font-size: 0.9rem; line-height: 1.7;">
+                        <p style="margin: 0 0 10px 0;">
+                            <strong>1. İade Tutarı:</strong> İptal ettiğiniz ürün veya ürünlerin ücreti, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Satış Sözleşmeleri Yönetmeliği uyarınca, iptal işleminin onaylanmasından itibaren en geç <strong>14 (on dört) iş günü</strong> içinde ödeme yaptığınız yönteme göre hesabınıza iade edilecektir.
+                        </p>
+                        <p style="margin: 0 0 10px 0;">
+                            <strong>2. Kargo Ücreti:</strong> Kısmi iptal durumunda, iptal edilen ürünlerin ücreti iade edilir. Ancak <strong>kargo ücreti iade edilmez</strong>. Kargo ücreti, siparişin teslim edilmesi için yapılan hizmet bedeli olduğundan, iptal edilen ürünler için dahi iade kapsamı dışındadır.
+                        </p>
+                        <p style="margin: 0 0 10px 0;">
+                            <strong>3. İptal Hakkı:</strong> Sadece "Ödendi" ve "Hazırlanıyor" statüsündeki siparişlerde kısmi iptal yapabilirsiniz. Kargoya verilen veya teslim edilen siparişlerde kısmi iptal yapılamaz.
+                        </p>
+                        <p style="margin: 0;">
+                            <strong>4. Geri Alma:</strong> Bu işlem geri alınamaz. İptal ettiğiniz ürünler siparişten çıkarılacak ve iade işlemi başlatılacaktır.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="warning-box" style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 15px; margin-bottom: 25px;">
+                    <p style="margin: 0; color: #856404; font-size: 0.9rem;">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                        <strong>Uyarı:</strong> Bu işlem geri alınamaz. Seçtiğiniz ürünler iptal edilecektir.
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="submit" class="btn-cancel" id="submit-btn" disabled
+                            style="flex: 1; padding: 12px 24px; background: #d63031; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; opacity: 0.5;">
+                        <i class="fas fa-times-circle"></i> Seçilen Ürünleri İptal Et
+                    </button>
+                    <a href="{% url 'order-tracking' %}" class="btn-cancel-link" 
+                       style="flex: 1; padding: 12px 24px; background: #f8f9fa; color: #636e72; text-decoration: none; border-radius: 8px; font-weight: 600; text-align: center; transition: 0.3s; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<style>
+.btn-cancel:hover:not(:disabled) { 
+    background: #c0392b !important; 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 8px rgba(214, 48, 49, 0.2); 
+}
+.btn-cancel:disabled {
+    cursor: not-allowed !important;
+}
+.btn-cancel-link:hover { background: #e9ecef !important; }
+.btn-max:hover { background: #7a5696 !important; }
+.product-item:hover {
+    border-color: #8e68ab !important;
+    box-shadow: 0 2px 8px rgba(142, 104, 171, 0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('.cancel-quantity-input');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    // Maximum buttons
+    document.querySelectorAll('.btn-max').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const itemId = this.getAttribute('data-item-id');
+            const input = document.getElementById(`cancel_quantity_${itemId}`);
+            const max = parseInt(input.getAttribute('data-max'));
+            input.value = max;
+            checkForm();
+        });
+    });
+    
+    // Listen to input changes
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const max = parseInt(this.getAttribute('data-max'));
+            const value = parseInt(this.value) || 0;
+            
+            if (value > max) {
+                this.value = max;
+            }
+            if (value < 0) {
+                this.value = 0;
+            }
+            
+            checkForm();
+        });
+    });
+    
+    // Form validation
+    function checkForm() {
+        let hasSelection = false;
+        inputs.forEach(input => {
+            if (parseInt(input.value) > 0) {
+                hasSelection = true;
+            }
+        });
+        
+        if (hasSelection) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+        }
+    }
+    
+    // Form submission validation
+    document.getElementById('cancel-form').addEventListener('submit', function(e) {
+        let hasSelection = false;
+        inputs.forEach(input => {
+            if (parseInt(input.value) > 0) {
+                hasSelection = true;
+            }
+        });
+        
+        if (!hasSelection) {
+            e.preventDefault();
+            alert('Lütfen en az bir ürün seçiniz.');
+            return false;
+        }
+        
+        return confirm('Seçilen ürünleri iptal etmek istediğinize emin misiniz?');
+    });
+    
+    // First check
+    checkForm();
+});
+</script>
+{% endblock %}

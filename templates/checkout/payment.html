@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% block title %}Ödeme Yöntemi | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<style>
+    :root {
+        --angeles-lila: #8e68ab;
+        --angeles-turkuaz: #69b3a2;
+        --angeles-gray: #f8fafc;
+        --angeles-text: #2c3e50;
+    }
+
+    .payment-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .payment-grid {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 30px;
+    }
+
+    .payment-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    /* Steps */
+    .checkout-steps {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 30px;
+        background: var(--angeles-gray);
+        padding: 15px;
+        border-radius: 12px;
+    }
+    .checkout-step { 
+        color: #94a3b8; 
+        font-weight: 600; 
+        font-size: 0.9rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+        padding-bottom: 5px;
+    }
+    .checkout-step:hover:not(.active) {
+        color: var(--angeles-turkuaz);
+        border-bottom: 2px solid var(--angeles-turkuaz);
+    }
+    .checkout-step.active { 
+        color: var(--angeles-lila); 
+        border-bottom: 2px solid var(--angeles-lila);
+        cursor: default;
+    }
+    .checkout-step.disabled {
+        color: #cbd5e1;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* Payment Options */
+    .payment-options {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .option-item {
+        border: 2px solid #edf2f7;
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        position: relative;
+    }
+
+    .option-item:hover { border-color: var(--angeles-turkuaz); }
+    .option-item.selected {
+        border-color: var(--angeles-lila);
+        background: #fcfaff;
+    }
+
+    .option-item input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--angeles-lila);
+    }
+
+    .option-info strong { display: block; color: var(--angeles-text); }
+    .option-info span { font-size: 0.85rem; color: #64748b; }
+
+    /* Order Summary Right Panel */
+    .summary-card {
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        height: fit-content;
+        position: sticky;
+        top: 20px;
+    }
+
+    .summary-title { font-size: 1.2rem; margin-bottom: 20px; color: var(--angeles-text); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; }
+    .summary-total { border-top: 2px solid #f1f5f9; margin-top: 15px; padding-top: 15px; font-weight: 700; font-size: 1.2rem; color: var(--angeles-lila); }
+
+    .btn-pay {
+        background: var(--angeles-lila);
+        color: white;
+        border: none;
+        padding: 18px;
+        border-radius: 12px;
+        width: 100%;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    .btn-pay:hover { background: var(--angeles-turkuaz); transform: translateY(-2px); }
+
+    .trust-badges {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+        opacity: 0.6;
+    }
+    .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 750px;
+    padding: 30px;
+    border-radius: 18px;
+    position: relative;
+    animation: scaleIn 0.25s ease;
+    margin: 20px;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+.modal-content input {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    color: #94a3b8;
+}
+</style>
+
+<div class="payment-container">
+    <div class="payment-grid">
+        
+        <div class="payment-card">
+            <div class="checkout-steps">
+                <a href="{% url 'checkout-address' %}" class="checkout-step">Adres</a>
+                <a href="{% url 'checkout-contracts' %}" class="checkout-step">Sözleşme</a>
+                <div class="checkout-step active">Ödeme</div>
+            </div>
+
+            <h2 style="color: var(--angeles-text); margin-bottom: 20px;">Ödeme Yöntemi Seçin</h2>
+            
+            <form method="post" id="payment-form" action="{% url 'iyzico-init' order.id %}">
+                {% csrf_token %}
+                <div class="payment-options">
+                    <label class="option-item selected" style="display: flex; align-items: center; padding: 20px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 15px; cursor: pointer; transition: 0.3s;">
+                        <input type="hidden" name="payment_method" value="iyzico">
+                        <div class="option-info">
+                            <strong style="display: block; font-size: 1rem; color: #333;">Iyzico (Kredi / Banka Kartı)</strong>
+                            <span style="font-size: 0.85rem; color: #777;">Kredi kartınızla taksitli veya tek çekim güvenli ödeme.</span>
+                        </div>
+                        <div style="margin-left: auto; display: flex; flex-direction: column; align-items: flex-end;">
+                            <img src="{% static 'images/iyzico-checkout.png' %}" alt="iyzico" style="height: 28px; width: auto;">
+                            <span style="font-size: 10px; color: #40C1AC; font-weight: 700; margin-top: 4px;">Korumalı Alışveriş</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div id="iyzicoModal" class="modal-overlay">
+                    <div class="modal-content">
+                        <button type="button" class="modal-close" id="closeIyzicoModal">&times;</button>
+                
+                        <h3 style="margin-bottom:15px; color:#2c3e50;">Kart Bilgileri</h3>
+                
+                        <div style="display:grid; gap:12px;">
+                            <input type="text" name="card_holder" placeholder="Kart Üzerindeki İsim" required>
+                            <input type="text" name="card_number" placeholder="Kart Numarası" maxlength="19" inputmode="numeric" required>
+                
+                            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+                                <input type="text" name="card_month" placeholder="AA" maxlength="2" inputmode="numeric" required>
+                                <input type="text" name="card_year" placeholder="YY" maxlength="2" inputmode="numeric" required>
+                                <input type="text" name="card_cvc" placeholder="CVC" maxlength="4" inputmode="numeric" required>
+                            </div>
+                
+                            <p style="font-size:0.8rem; color:#94a3b8;">
+                                Kart bilgileriniz iyzico’nun güvenli altyapısı üzerinden işlenecektir.
+                            </p>
+                
+                            <button type="submit" class="btn-pay">
+                                Ödemeyi Tamamla
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="trust-badges">
+                <i class="fas fa-lock"></i> 256-bit SSL Güvenli Ödeme
+                <i class="fas fa-shield-alt"></i> %100 Orijinal Ürün
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <h3 class="summary-title" style="color: var(--angeles-lila); margin-bottom: 25px;">Sipariş Özeti</h3>
+        
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <span>Ürün Toplamı (KDV Dahil)</span>
+                <span>{{ order.items_total|floatformat:2 }} ₺</span>
+            </div>
+        
+            <div style="display: flex; justify-content: space-between;">
+                <span>Kargo</span>
+                {% if order.cargo_price == 0 %}
+                    <span style="color: var(--angeles-yesil); font-weight: 600;">Ücretsiz</span>
+                {% else %}
+                    <span>{{ order.cargo_price|floatformat:2 }} ₺</span>
+                {% endif %}
+            </div>
+        
+            {% if order.cargo_price == 0 %}
+                <p style="margin-top:10px; font-size:0.85rem; color: var(--angeles-yesil);">
+                    🎉 Tebrikler! Kargonuz Ücretsiz!
+                </p>
+            {% else %}
+                <p style="margin-top:10px; font-size:0.85rem; color:#94a3b8;">
+                    🚚 Güvenli paketleme ile kapınızda.
+                </p>
+            {% endif %}
+        
+            <div class="summary-total" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 1rem; color: var(--angeles-text); font-weight: 500;">Ödenecek Tutar</span>
+                    <span style="font-size: 1.25rem; font-weight: bold; color: var(--angeles-lila);">{{ order.total_price|floatformat:2 }} ₺</span>
+                </div>
+            </div>
+        
+            <button type="submit" form="payment-form" class="btn-pay" style="margin-top: 20px;">
+                Güvenli Ödeme Yap <i class="fas fa-chevron-right" style="margin-left: 8px;"></i>
+            </button>
+        
+            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 15px; text-align: center;">
+                <i class="fas fa-lock" style="margin-right: 5px;"></i> 256-bit SSL ile güvenli ödeme altyapısı kullanılmaktadır.
+            </p>
+        
+            <p style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: #bbb;">
+                <i class="fas fa-leaf" style="color: var(--angeles-yesil);"></i> {{ STORE_SLOGAN }}
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('iyzicoModal');
+    const openBtn = document.querySelector('.btn-pay[form="payment-form"]');
+    const closeBtn = document.getElementById('closeIyzicoModal');
+
+    // Open the payment modal
+    openBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.classList.add('active');
+    });
+
+    // Close
+    closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', e => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
+
+    // Card number formatting (SUCCESSFUL)
+    document.addEventListener('input', function(e) {
+        if (e.target.name === 'card_number') {
+            let value = e.target.value.replace(/\D/g, '').slice(0, 16);
+            let formatted = value.match(/.{1,4}/g);
+            e.target.value = formatted ? formatted.join(' ') : '';
+        }
+    });
+</script>
+
+{% endblock %}

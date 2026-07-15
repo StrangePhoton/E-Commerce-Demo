@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}İade Talebi Oluştur | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<main style="padding: 40px 0; background: #fcfaff; min-height: 80vh;">
+    <div class="container" style="max-width: 700px; margin: 0 auto; padding: 0 20px;">
+        <nav class="breadcrumb-nav" style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #636e72; margin-bottom: 25px;">
+            <a href="{% url 'home' %}" style="color: #8e68ab; text-decoration: none;">Ana Sayfa</a>
+            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+            <a href="{% url 'order-tracking' %}" style="color: #8e68ab; text-decoration: none;">Siparişlerim</a>
+            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+            <span>İade Talebi</span>
+        </nav>
+
+        <div class="card" style="background: white; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 30px;">
+            <h1 style="font-size: 1.8rem; color: #2d3436; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-undo" style="color: #00b894;"></i>
+                İade Talebi Oluştur
+            </h1>
+            <p style="color: #636e72; margin-bottom: 25px;">Sipariş #{{ order.id }} için iade talebi</p>
+
+            <div class="product-info" style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    {% if order_item.product.get_main_image %}
+                        <img src="{{ order_item.product.get_main_image }}" alt="{{ order_item.product.name }}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: white; padding: 5px;">
+                    {% endif %}
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 5px 0; color: #2d3436;">{{ order_item.product.name }}</h3>
+                        <p style="margin: 0; color: #636e72; font-size: 0.9rem;">{{ order_item.quantity }} Adet × {{ order_item.price }} ₺</p>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" style="margin-top: 25px;">
+                {% csrf_token %}
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="quantity" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436;">
+                        İade Edilecek Miktar <span style="color: #d63031;">*</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        id="quantity" 
+                        name="quantity" 
+                        min="1" 
+                        max="{{ order_item.quantity }}"
+                        value="1"
+                        required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;"
+                    >
+                    <small style="color: #636e72; display: block; margin-top: 5px;">
+                        Maksimum {{ order_item.quantity }} adet iade edilebilir.
+                    </small>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="reason" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436;">
+                        İade Sebebi <span style="color: #d63031;">*</span>
+                    </label>
+                    <select 
+                        id="reason" 
+                        name="reason" 
+                        required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; background: white;"
+                    >
+                        <option value="">Seçiniz...</option>
+                        <option value="defective">Ürün Hatalı</option>
+                        <option value="wrong_item">Yanlış Ürün</option>
+                        <option value="not_as_described">Açıklamaya Uygun Değil</option>
+                        <option value="damaged">Hasarlı Geldi</option>
+                        <option value="size_issue">Beden Sorunu</option>
+                        <option value="color_issue">Renk Sorunu</option>
+                        <option value="other">Diğer</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="reason_detail" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436;">
+                        Detaylı Açıklama
+                    </label>
+                    <textarea 
+                        id="reason_detail" 
+                        name="reason_detail" 
+                        rows="5" 
+                        placeholder="İade sebebinizi detaylı olarak açıklayınız..."
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical;"
+                    ></textarea>
+                </div>
+
+                <div class="legal-notice" style="background: #e8f4f8; border: 2px solid #3498db; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: #2c3e50; font-size: 1rem; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-gavel" style="color: #3498db;"></i>
+                        Önemli Hukuki Bilgilendirme
+                    </h3>
+                    <div style="color: #2c3e50; font-size: 0.9rem; line-height: 1.7;">
+                        <p style="margin: 0 0 10px 0;">
+                            <strong>1. İade Tutarı:</strong> İade edilen ürün veya ürünlerin ücreti, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Satış Sözleşmeleri Yönetmeliği uyarınca, iade işleminin onaylanmasından itibaren en geç <strong>14 (on dört) iş günü</strong> içinde ödeme yaptığınız yönteme göre hesabınıza iade edilecektir.
+                        </p>
+                        <p style="margin: 0 0 10px 0;">
+                            <strong>2. Kargo Ücreti:</strong> <strong style="color: #d63031;">Kargo ücreti iade edilmez.</strong> Kargo ücreti, siparişin teslim edilmesi için yapılan hizmet bedeli olduğundan, iade edilen ürünler için dahi iade kapsamı dışındadır. İade edilen ürünlerin kargo ücreti de müşteriye aittir.
+                        </p>
+                        <p style="margin: 0 0 10px 0;">
+                            <strong>3. İade Koşulları:</strong> İade edilecek ürünler orijinal ambalajında, kullanılmamış, hasar görmemiş ve etiketleri yerinde olmalıdır. Aksi durumda iade talebi reddedilebilir.
+                        </p>
+                        <p style="margin: 0;">
+                            <strong>4. İade Süreci:</strong> İade talebiniz incelendikten sonra size bilgi verilecektir. Onaylanan iadeler için kargo bilgileri paylaşılacaktır. Ürün bize ulaştıktan sonra iade işlemi tamamlanacaktır.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="info-box" style="background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 8px; padding: 15px; margin-bottom: 25px;">
+                    <p style="margin: 0; color: #2e7d32; font-size: 0.9rem;">
+                        <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+                        İade talebiniz incelendikten sonra size bilgi verilecektir. Lütfen ürünü orijinal ambalajında saklayınız.
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="submit" class="btn-submit" style="flex: 1; padding: 12px 24px; background: #00b894; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                        <i class="fas fa-check"></i> İade Talebi Oluştur
+                    </button>
+                    <a href="{% url 'order-tracking' %}" class="btn-cancel-link" style="flex: 1; padding: 12px 24px; background: #f8f9fa; color: #636e72; text-decoration: none; border-radius: 8px; font-weight: 600; text-align: center; transition: 0.3s; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<style>
+.btn-submit:hover { background: #00a085 !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 184, 148, 0.2); }
+.btn-cancel-link:hover { background: #e9ecef !important; }
+</style>
+{% endblock %}

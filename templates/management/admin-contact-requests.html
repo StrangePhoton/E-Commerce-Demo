@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}İletişim Talepleri | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Table Container */
+    .table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow-x: auto;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 16px;
+        text-align: left;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f2f6;
+    }
+
+    .admin-table thead th {
+        background-color: #f8f9fa;
+        color: #2f3542;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+
+    /* Column Widths */
+    .col-name {
+        width: 20%;
+    }
+
+    .col-subject {
+        width: 25%;
+    }
+
+    .col-email {
+        width: 20%;
+    }
+
+    .col-date {
+        width: 15%;
+    }
+
+    .col-status {
+        width: 10%;
+    }
+
+    .col-action {
+        width: 160px;
+        text-align: right !important;
+    }
+
+    /* Unread */
+    .unread {
+        background: #fcfaff;
+    }
+
+    /* Status Badge */
+    .status-badge {
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        display: inline-block;
+    }
+
+    .status-pending {
+        color: #8e44ad;
+        background: #f3f0f7;
+        border: 1px solid #e4dbef;
+    }
+
+    .status-completed {
+        color: #27ae60;
+        background: #ebfaf0;
+        border: 1px solid #d4f5e0;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .btn-view {
+        background-color: #f3f0f7;
+        color: #8e44ad !important;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .modal-box {
+        background: white;
+        width: 600px;
+        max-width: 90%;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        animation: fadeIn 0.2s ease;
+    }
+
+    .modal-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f1f2f6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #2f3542;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #a4b0be;
+    }
+
+    .modal-body {
+        padding: 24px;
+        font-size: 0.95rem;
+        color: #2f3542;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="admin-layout">
+    {% include 'includes/admin-sidebar-include.html' %}
+
+    <main class="admin-content" style="padding:40px;">
+        <div class="content-header" style="margin-bottom:30px;">
+            <h1 class="dashboard-title" style="margin:0;">İletişim Talepleri</h1>
+        </div>
+
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th class="col-name">Ad Soyad</th>
+                        <th class="col-subject">Konu</th>
+                        <th class="col-email">E-posta</th>
+                        <th class="col-date">Tarih</th>
+                        <th class="col-status">Durum</th>
+                        <th class="col-action">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in contact_messages %}
+                    <tr class="{% if not msg.is_read %}unread{% endif %}">
+                        <td class="col-name" style="font-weight:600;color:#2f3542;">
+                            {{ msg.name }}
+                        </td>
+
+                        <td class="col-subject">
+                            {{ msg.subject }}
+                        </td>
+
+                        <td class="col-email" style="color:#747d8c;font-size:0.9rem;">
+                            {{ msg.email }}
+                        </td>
+
+                        <td class="col-date">
+                            {{ msg.created_at|date:"d/m/Y" }}<br>
+                            <small style="color:#a4b0be;">
+                                {{ msg.created_at|date:"H:i" }}
+                            </small>
+                        </td>
+
+                        <td class="col-status">
+                            {% if msg.is_read %}
+                            <span class="status-badge status-completed">Okundu</span>
+                            {% else %}
+                            <span class="status-badge status-pending">Yeni</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="col-action">
+                            <div class="action-buttons">
+                                <a href="javascript:void(0);" onclick="openMessageModal({{ msg.id }})" class="btn-view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:60px;color:#a4b0be;">
+                            <i class="fas fa-inbox" style="font-size:2rem;display:block;margin-bottom:10px;"></i>
+                            Henüz iletişim mesajı bulunmamaktadır.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="messageModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modal-subject"></h3>
+            <button class="modal-close" onclick="closeMessageModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <p><strong>Gönderen:</strong> <span id="modal-name"></span></p>
+            <p><strong>E-posta:</strong> <span id="modal-email"></span></p>
+            <p><strong>Telefon:</strong> <span id="modal-phone"></span></p>
+            <p><strong>Tarih:</strong> <span id="modal-date"></span></p>
+
+            <hr>
+
+            <div id="modal-message" style="white-space:pre-line;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openMessageModal(messageId) {
+        fetch(`/yonetim/mesaj-oku/${messageId}/`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("modal-subject").innerText = data.subject;
+                document.getElementById("modal-name").innerText = data.name;
+                document.getElementById("modal-email").innerText = data.email;
+                document.getElementById("modal-phone").innerText = data.phone;
+                document.getElementById("modal-date").innerText = data.created_at;
+                document.getElementById("modal-message").innerText = data.message;
+
+                document.getElementById("messageModal").style.display = "flex";
+            });
+    }
+
+    function closeMessageModal() {
+        document.getElementById("messageModal").style.display = "none";
+    }
+</script>
+
+{% endblock %}

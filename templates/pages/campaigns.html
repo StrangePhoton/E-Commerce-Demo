@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Kampanyalar | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/category.css' %}">
+<style>
+    /* Campaign Page Specific Styles */
+    .campaigns-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .breadcrumb { margin-bottom: 25px; font-size: 0.9rem; color: #888; }
+    .breadcrumb a { color: var(--angeles-lila); text-decoration: none; font-weight: 500; }
+
+    .category-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #fcf9ff;
+    }
+
+    .category-header h1 {
+        font-size: 2.2rem;
+        color: var(--angeles-text);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .category-header h1::before {
+        content: '\f427';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        color: var(--angeles-turkuaz);
+        font-size: 1.8rem;
+    }
+
+    .product-count {
+        background: var(--angeles-lila);
+        color: white;
+        padding: 6px 15px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .category-content {
+        min-height: 400px;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+        align-items: flex-start;
+    }
+
+    /* --- AVERAGE FIX --- */
+    .empty-state {
+        grid-column: 1 / -1; /* Grid all columns */
+        text-align: center;
+        padding: 100px 20px;
+        background: #fff;
+        border: 2px dashed #eee;
+        border-radius: 30px;
+        margin: 20px auto;
+        max-width: 800px; /* Prevent too much spread */
+        width: 100%;
+    }
+
+    .empty-state i {
+        font-size: 4.5rem;
+        color: #e0e0e0;
+        margin-bottom: 25px;
+        display: block;
+    }
+
+    .empty-state p {
+        font-size: 1.3rem;
+        color: #777;
+        margin-bottom: 30px;
+    }
+
+    .btn-angeles {
+        display: inline-block;
+        padding: 14px 40px;
+        background: var(--angeles-turkuaz);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(64, 193, 172, 0.2);
+    }
+
+    .btn-angeles:hover {
+        background: var(--angeles-lila);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(142, 104, 171, 0.3);
+    }
+</style>
+
+<main class="campaigns-page">
+    <div class="breadcrumb">
+        <a href="{% url 'home' %}">Ana Sayfa</a> <i class="fas fa-chevron-right" style="font-size: 10px; margin: 0 8px;"></i>
+        <span>Kampanyalar</span>
+    </div>
+
+    <div class="category-header">
+        <h1>Fırsat Ürünleri</h1>
+        <div class="category-controls">
+            <span class="product-count">{{ products|length }} Üründe İndirim</span>
+        </div>
+    </div>
+
+    <div class="category-content">
+        <div class="products-grid" id="productsGrid">
+            {% for product in products %}
+                <div class="product-wrapper">
+                    {% include 'components/product-card.html' with product=product %}
+                </div>
+            {% empty %}
+                <div class="empty-state animate-fade">
+                    <i class="fas fa-tags"></i>
+                    <p>Şu anda aktif bir kampanya bulunmamaktadır.</p>
+                    <a href="{% url 'home' %}" class="btn-angeles">Fırsatları Kaçırma, Ürünleri İncele</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+{% include 'components/price-popup.html' %}
+{% endblock %}

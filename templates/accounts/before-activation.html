@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mail Aktivasyonu | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 200px); display:flex; align-items:center; justify-content:center; padding:40px;">
+    <div style="
+        background:#fff;
+        max-width:520px;
+        width:100%;
+        padding:40px;
+        border-radius:20px;
+        box-shadow:0 15px 35px rgba(142,104,171,0.12);
+        text-align:center;
+        border:1px solid #edf2f7;
+    ">
+        <div style="
+            width:80px;
+            height:80px;
+            margin:0 auto 20px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#8e68ab,#69b3a2);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            font-size:2rem;
+        ">
+            <i class="fas fa-envelope-open-text"></i>
+        </div>
+
+        <h2 style="color:#334155; font-weight:700; margin-bottom:15px;">
+            Mail Gönderildi
+        </h2>
+
+        <p style="color:#64748b; font-size:0.95rem; line-height:1.6;">
+            <strong>{{ email }}</strong> adresine aktivasyon bağlantısı gönderdik.
+            <br>
+            Hesabınızı aktif etmek için lütfen mailinizi kontrol edin.
+        </p>
+
+        <div style="
+            background:#fcfaff;
+            border:1px dashed #8e68ab;
+            padding:15px;
+            border-radius:12px;
+            margin:25px 0;
+            font-size:0.85rem;
+            color:#64748b;
+        ">
+            <i class="fas fa-info-circle" style="color:#8e68ab;"></i>
+            Maili göremiyorsanız <strong>Spam / Gereksiz</strong> klasörünü kontrol edin.
+        </div>
+
+        <a href="{% url 'login' %}" class="btn-primary" style="display:inline-flex;">
+            Giriş Sayfasına Dön
+        </a>
+    </div>
+</div>
+{% endblock %}

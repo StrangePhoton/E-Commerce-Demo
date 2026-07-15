@@ -1,0 +1,225 @@
+/* --- Angeles Yaşam Modern Admin Theme --- */
+
+:root {
+  --admin-primary: #8E68AB;    /* Purple */
+  --admin-secondary: #40C1AC;  /* Turquoise */
+  --admin-text: #2d3436;
+  --admin-bg: #f4f7f6;
+  --white: #ffffff;
+  --border-color: #eee;
+  --sidebar-bg: #ffffff;
+}
+
+/* General Reset and Cleanup */
+body {
+  background-color: var(--admin-bg);
+  margin: 0;
+  padding: 0;
+}
+
+/* Layout Structure */
+.admin-layout {
+  display: grid !important; /* Switch from Flex to Grid */
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 90px);
+  background: var(--admin-bg);
+  width: 100%;
+}
+
+/* --- SIDEBAR DESIGN (Fixed on all pages) --- */
+.admin-sidebar {
+  width: 280px;
+  background: var(--white) !important;
+  padding: 30px 20px;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-sidebar h2 {
+  font-size: 1.1rem !important;
+  color: var(--admin-primary) !important;
+  margin-bottom: 25px;
+  padding-left: 10px;
+  border-left: 4px solid var(--admin-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.admin-sidebar ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.admin-sidebar ul li {
+  margin-bottom: 8px !important;
+}
+
+.admin-sidebar ul li a {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  text-decoration: none !important;
+  color: var(--admin-text) !important;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  background: transparent !important; /* Reset old blue */
+}
+
+/* Change icon color to purple */
+.admin-sidebar ul li a i {
+  width: 20px;
+  color: #b2bec3 !important; /* Passive icon color */
+  font-size: 18px !important;
+  margin-right: 0 !important;
+}
+
+/* Hover and Active States */
+.admin-sidebar ul li a:hover, 
+.admin-sidebar ul li a.active {
+  background: #f3f0f7 !important;
+  color: var(--admin-primary) !important;
+}
+
+.admin-sidebar ul li a:hover i, 
+.admin-sidebar ul li a.active i {
+  color: var(--admin-primary) !important;
+}
+
+/* --- CONTENT AREA --- */
+.admin-content {
+  padding: 40px;
+  flex: 1;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  color: var(--admin-text);
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+/* --- TABLE DESIGN --- */
+.table-container {
+  background: var(--white);
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  background-color: #fafafa !important;
+  color: #7f8c8d !important;
+  font-weight: 600;
+  padding: 15px 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.admin-table td {
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  color: var(--admin-text);
+}
+
+/* --- CARDS (For Dashboard) --- */
+.admin-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.admin-card {
+  background: var(--white);
+  border-radius: 15px;
+  padding: 25px;
+  text-decoration: none;
+  color: var(--admin-text);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid transparent;
+}
+
+.admin-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--admin-primary);
+}
+
+.admin-card i {
+  font-size: 32px;
+  color: var(--admin-primary) !important; /* Blue icons are purple */
+}
+
+/* --- MODAL MODERNIZE --- */
+.modal-content {
+  border-radius: 20px !important;
+  padding: 30px !important;
+  border: none !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+}
+
+.modal-content h2 {
+  color: var(--admin-primary);
+  font-weight: 700;
+}
+
+/* --- FORM ELEMENTS --- */
+.admin-form input, .admin-form select, .admin-form textarea {
+  border: 1px solid #ddd !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+}
+
+.admin-form input:focus {
+  border-color: var(--admin-primary) !important;
+  outline: none;
+}
+
+/* --- BUTTONS --- */
+.btn-save, .btn-primary {
+  background: var(--admin-primary) !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 25px !important;
+  border-radius: 10px !important;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background: var(--admin-secondary) !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Product Thumbnail */
+.product-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Mobile Compatibility */
+@media (max-width: 992px) {
+  .admin-layout {
+      grid-template-columns: 1fr;
+  }
+  .admin-sidebar {
+      display: none; /* Hamburger menu can be implemented */
+  }
+}

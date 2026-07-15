@@ -1,0 +1,9 @@
+Django==5.1.4
+gunicorn
+psycopg2-binary
+django-redis
+beautifulsoup4
+xhtml2pdf
+iyzipay
+Pillow
+python-dotenv

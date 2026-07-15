@@ -1,0 +1,604 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sipariş Takibi | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<main class="order-tracking-page">
+    <div class="container">
+        <nav class="breadcrumb-nav">
+            <a href="{% url 'home' %}">Ana Sayfa</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Siparişlerim</span>
+        </nav>
+
+        <header class="page-header">
+            <h1 class="page-title"><i class="fas fa-box-open"></i> Sipariş Takibi</h1>
+            <p class="page-subtitle">Tüm siparişlerinizin durumunu buradan takip edebilir ve değerlendirebilirsiniz.</p>
+        </header>
+
+        {% csrf_token %}
+
+        {% if user.is_authenticated %}
+            {% if orders %}
+                <div class="orders-container">
+                    {% for order in orders %}
+                        <div class="order-card animate-up">
+                            <div class="order-card-header">
+                                <div class="header-left">
+                                    <div class="order-id-group">
+                                        <span class="label">Sipariş No:</span>
+                                        <span class="value">#{{ order.id }}</span>
+                                    </div>
+                                    <div class="order-date-group">
+                                        <i class="far fa-calendar-alt"></i>
+                                        <span>{{ order.created_at|date:"d F Y, H:i" }}</span>
+                                    </div>
+                                </div>
+                                <div class="header-right">
+                                    <div class="status-wrapper">
+                                        <span class="status-dot status-{{ order.status }}"></span>
+                                        <span class="status-text status-color-{{ order.status }}">{{ order.get_status_display }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="order-card-body">
+                                <div class="items-list">
+                                    {% for item in order.items.all %}
+                                        <div class="order-item">
+                                            <div class="item-main">
+                                                <div class="item-img-container">
+                                                    <a href="{% url 'product_detail' item.product.slug %}">
+                                                        {% if item.product.get_main_image %}
+                                                            <img src="{{ item.product.get_main_image }}" alt="{{ item.product.name }}">
+                                                        {% else %}
+                                                            <img src="{% static STORE_LOGO %}" alt="Resim Yok">
+                                                        {% endif %}
+                                                    </a>
+                                                </div>
+                                                <div class="item-details">
+                                                    <a href="{% url 'product_detail' item.product.slug %}" class="product-name">
+                                                        {{ item.product.name }}
+                                                    </a>
+                                                    {% if item.size or item.color %}
+                                                        <div style="margin-top: 5px; margin-bottom: 5px;">
+                                                            {% if item.size %}
+                                                                <span style="display: inline-block; padding: 3px 8px; background: #f0f0f0; border-radius: 5px; font-size: 0.8rem; margin-right: 5px;">
+                                                                    <i class="fas fa-ruler"></i> {{ item.size }}
+                                                                </span>
+                                                            {% endif %}
+                                                            {% if item.color %}
+                                                                <span style="display: inline-block; padding: 3px 8px; background: #f0f0f0; border-radius: 5px; font-size: 0.8rem;">
+                                                                    <i class="fas fa-palette"></i> {{ item.color }}
+                                                                </span>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endif %}
+                                                    <div class="item-meta">
+                                                        <span class="qty">
+                                                            {% if item.cancelled_quantity > 0 %}
+                                                                {{ item.active_quantity }}/{{ item.quantity }} Adet
+                                                                <span class="cancelled-badge">({{ item.cancelled_quantity }} iptal)</span>
+                                                            {% else %}
+                                                                {{ item.quantity }} Adet
+                                                            {% endif %}
+                                                        </span>
+                                                        <span class="sep">|</span>
+                                                        <span class="price">{{ item.price }} ₺</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="item-action-area">
+                                                {% if order.status == 'preparing' or order.status == 'paid' %}
+                                                    {% if not item.is_fully_cancelled %}
+                                                        <div class="action-buttons">
+                                                            <a href="{% url 'cancel-order-item' order.id item.id %}" class="btn-cancel-item">
+                                                                <i class="fas fa-times"></i> İptal Et
+                                                            </a>
+                                                        </div>
+                                                    {% endif %}
+                                                {% elif order.status == 'delivered' and not item.is_fully_cancelled %}
+                                                    <div class="action-buttons">
+                                                        <a href="{% url 'create-return-request' order.id item.id %}" class="btn-return-item">
+                                                            <i class="fas fa-undo"></i> İade Talebi
+                                                        </a>
+                                                        <div class="rating-box product-rating-section" 
+                                                             data-product-id="{{ item.product.id }}"
+                                                             data-submit-url="{% url 'submit-rating' item.product.slug %}"
+                                                             data-delete-url="{% url 'delete-rating' item.product.slug %}"
+                                                             {% if item.user_rating %}data-user-rating="{{ item.user_rating.rating }}"{% endif %}>
+                                                            
+                                                            <p class="rating-title">Ürünü Değerlendir</p>
+                                                            <div class="stars-container">
+                                                                <div class="stars-input-compact">
+                                                                    {% for i in "12345" %}
+                                                                        <i class="far fa-star star-input-compact" data-rating="{{ forloop.counter }}"></i>
+                                                                    {% endfor %}
+                                                                </div>
+                                                                <input type="hidden" name="rating" class="rating-input-compact" value="{% if item.user_rating %}{{ item.user_rating.rating }}{% else %}0{% endif %}">
+                                                                
+                                                                <div class="rating-btns">
+                                                                    <button type="button" class="btn-rate-submit" data-action="submit">
+                                                                        {% if item.user_rating %}<i class="fas fa-sync-alt"></i> Güncelle{% else %}<i class="fas fa-check"></i> Gönder{% endif %}
+                                                                    </button>
+                                                                    {% if item.user_rating %}
+                                                                        <button type="button" class="btn-rate-delete" data-action="delete" title="Sil">
+                                                                            <i class="fas fa-trash-alt"></i>
+                                                                        </button>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            {% if order.billing_full_name or order.invoice_type or order.tax_number or order.invoice_identity_number %}
+                            <div class="order-card-body" style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px;">
+                                <h4 style="margin: 0 0 15px 0; color: var(--text-main); font-size: 1rem;">
+                                    <i class="fas fa-file-invoice"></i> Fatura Bilgileri
+                                </h4>
+                                
+                                {% if order.billing_full_name %}
+                                <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+                                    <span style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 5px;">Fatura Adresi:</span>
+                                    <div style="color: var(--text-main); font-size: 0.9rem; line-height: 1.6;">
+                                        <strong>{{ order.billing_full_name }}</strong><br>
+                                        {% if order.billing_phone %}{{ order.billing_phone }}<br>{% endif %}
+                                        {{ order.billing_address }}<br>
+                                        {{ order.billing_district }} / {{ order.billing_city|upper }}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                                    {% if order.invoice_type %}
+                                    <div>
+                                        <span style="color: var(--text-muted); font-size: 0.85rem;">Fatura Tipi:</span>
+                                        <strong style="display: block; margin-top: 4px; color: var(--text-main);">
+                                            {{ order.get_invoice_type_display }}
+                                        </strong>
+                                    </div>
+                                    {% endif %}
+                                    {% if order.tax_number %}
+                                    <div>
+                                        <span style="color: var(--text-muted); font-size: 0.85rem;">Vergi Numarası:</span>
+                                        <strong style="display: block; margin-top: 4px; color: var(--text-main);">
+                                            {{ order.tax_number }}
+                                        </strong>
+                                    </div>
+                                    {% endif %}
+                                    {% if order.invoice_identity_number %}
+                                    <div>
+                                        <span style="color: var(--text-muted); font-size: 0.85rem;">TC Kimlik No:</span>
+                                        <strong style="display: block; margin-top: 4px; color: var(--text-main);">
+                                            {{ order.invoice_identity_number|slice:":2" }}*********{{ order.invoice_identity_number|slice:"-2:" }}
+                                        </strong>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="order-card-footer">
+                                <div class="footer-left" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    {% if order.status == 'preparing' or order.status == 'paid' %}
+                                        <a href="{% url 'cancel-order-partial' order.id %}" class="btn-cancel-order" style="background: #f39c12;">
+                                            <i class="fas fa-clipboard-list"></i> Kısmi İptal
+                                        </a>
+                                        <a href="{% url 'cancel-order' order.id %}" class="btn-cancel-order">
+                                            <i class="fas fa-times-circle"></i> Tam İptal
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="total-section">
+                                    <span class="total-label">Toplam Tutar</span>
+                                    <span class="total-value">{{ order.total_price|floatformat:2 }} ₺</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state-card">
+                    <div class="empty-icon"><i class="fas fa-box-open"></i></div>
+                    <h2>Siparişiniz bulunmuyor</h2>
+                    <p>Henüz bir sipariş vermediniz. Harika ürünlerimizi incelemeye ne dersiniz?</p>
+                    <a href="{% url 'home' %}" class="btn-primary-large">Alışverişe Başla</a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state-card auth-card">
+                <div class="empty-icon"><i class="fas fa-lock"></i></div>
+                <h2>Giriş Yapmalısınız</h2>
+                <p>Siparişlerinizi takip etmek için üye girişi yapmanız gerekmektedir.</p>
+                <a href="{% url 'login' %}" class="btn-primary-large">Giriş Yap</a>
+            </div>
+        {% endif %}
+    </div>
+</main>
+
+<style>
+/* CSS Variables and Basic Settings */
+:root {
+    --primary-color: #8e68ab;
+    --secondary-color: #69b3a2;
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --bg-light: #f8f9fa;
+    --border-color: #eee;
+    --shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.order-tracking-page {
+    padding: 40px 0;
+    background-color: #fcfaff;
+    min-height: 80vh;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Breadcrumb */
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 25px;
+}
+.breadcrumb-nav a { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+.breadcrumb-nav i { font-size: 10px; }
+
+/* Header */
+.page-header { margin-bottom: 40px; }
+.page-title { font-size: 2.2rem; color: var(--text-main); font-weight: 800; display: flex; align-items: center; gap: 15px; margin-bottom: 5px; }
+.page-title i { color: var(--secondary-color); }
+.page-subtitle { color: var(--text-muted); font-size: 1.1rem; }
+
+/* Order Card */
+.order-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.order-card-header {
+    background: #fafafa;
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.order-id-group .label { color: var(--text-muted); font-size: 0.85rem; }
+.order-id-group .value { font-weight: 700; color: var(--text-main); font-size: 1.1rem; margin-left: 5px; }
+.order-date-group { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+
+.status-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 6px 14px;
+    border-radius: 50px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+
+.status-dot { width: 10px; height: 10px; border-radius: 50%; }
+.status-text { font-weight: 700; font-size: 0.85rem; text-transform: uppercase; }
+
+/* Status Colors */
+.status-pending { background: #fdcb6e; }
+.status-color-pending { color: #d35400; }
+.status-delivered { background: #55efc4; }
+.status-color-delivered { color: #00b894; }
+.status-shipped { background: #81ecec; }
+.status-color-shipped { color: #0984e3; }
+.status-cancelled { background: #ff7675; }
+.status-color-cancelled { color: #d63031; }
+
+/* Items List */
+.order-item {
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f9f9f9;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.item-main { display: flex; align-items: center; gap: 15px; flex: 1; min-width: 250px; }
+.item-img-placeholder {
+    width: 60px; height: 60px; background: #f0f0f0; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 1.5rem;
+}
+
+.product-name {
+    display: block; color: var(--text-main); text-decoration: none;
+    font-weight: 600; font-size: 1.05rem; margin-bottom: 5px; transition: color 0.3s;
+}
+.product-name:hover { color: var(--primary-color); }
+
+.item-meta { color: var(--text-muted); font-size: 0.9rem; }
+.item-meta .price { font-weight: 700; color: var(--secondary-color); }
+.item-meta .sep { margin: 0 8px; color: #ddd; }
+
+/* Product Image Container */
+.item-img-container {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0; /* Prevent the size from shrinking */
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Fit the image into the box without distorting it */
+    padding: 2px; /* Little space from the edges for a cleaner look */
+}
+
+/* If the image is not available, the placeholder should be the same size */
+.item-img-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    font-size: 1.2rem;
+}
+
+/* Rating Area */
+.item-action-area { flex: 0 0 300px; }
+.rating-box {
+    background: #fcfaff; border: 1px solid #f0e6f7;
+    padding: 15px; border-radius: 12px;
+}
+.rating-title { font-size: 0.85rem; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
+.stars-container { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+.stars-input-compact { color: #dfe6e9; font-size: 1.2rem; cursor: pointer; display: flex; gap: 4px; }
+.star-input-compact.fas { color: #fdcb6e; }
+
+.rating-btns { display: flex; gap: 5px; }
+.btn-rate-submit {
+    background: var(--primary-color); color: white; border: none; padding: 6px 12px;
+    border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.3s;
+}
+.btn-rate-delete {
+    background: #fff0f0; color: #ff7675; border: none; padding: 6px 10px;
+    border-radius: 6px; cursor: pointer; transition: 0.3s;
+}
+.btn-rate-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(142, 104, 171, 0.2); }
+
+/* Footer */
+.order-card-footer { 
+    padding: 20px 25px; 
+    background: #fff; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+.footer-left { display: flex; gap: 10px; }
+.total-section { text-align: right; }
+.total-label { display: block; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px; }
+.total-value { font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
+
+/* Action Buttons */
+.action-buttons { display: flex; flex-direction: column; gap: 10px; }
+.btn-cancel-item, .btn-return-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+.btn-cancel-item {
+    background: #fff0f0;
+    color: #d63031;
+    border: 1px solid #ffcccc;
+}
+.btn-cancel-item:hover {
+    background: #ff7675;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(214, 48, 49, 0.2);
+}
+.btn-return-item {
+    background: #e8f5e9;
+    color: #00b894;
+    border: 1px solid #c8e6c9;
+}
+.btn-return-item:hover {
+    background: #00b894;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 184, 148, 0.2);
+}
+.btn-cancel-order {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #fff0f0;
+    color: #d63031;
+    border: 1px solid #ffcccc;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+.btn-cancel-order:hover {
+    background: #ff7675;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(214, 48, 49, 0.2);
+}
+.cancelled-badge {
+    color: #d63031;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 5px;
+}
+
+/* Empty States */
+.empty-state-card {
+    text-align: center; padding: 80px 40px; background: white; border-radius: 20px; box-shadow: var(--shadow);
+}
+.empty-icon { font-size: 4rem; color: #eee; margin-bottom: 25px; }
+.empty-state-card h2 { margin-bottom: 10px; color: var(--text-main); }
+.empty-state-card p { color: var(--text-muted); margin-bottom: 30px; }
+.btn-primary-large {
+    display: inline-block; padding: 15px 40px; background: var(--primary-color);
+    color: white; text-decoration: none; border-radius: 50px; font-weight: 700; transition: 0.3s;
+}
+.btn-primary-large:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(142, 104, 171, 0.2); }
+
+/* Animations */
+.animate-up { animation: fadeInUp 0.5s ease backwards; }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .order-card-header { flex-direction: column; align-items: flex-start; }
+    .header-right { width: 100%; display: flex; justify-content: flex-start; }
+    .item-action-area { flex: 1 1 100%; }
+    .order-item { padding: 15px; }
+    .page-title { font-size: 1.6rem; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ratingSections = document.querySelectorAll('.product-rating-section');
+    
+    ratingSections.forEach(section => {
+        const stars = section.querySelectorAll('.star-input-compact');
+        const ratingInput = section.querySelector('.rating-input-compact');
+        const userRating = section.dataset.userRating;
+        
+        if (userRating && parseInt(userRating) > 0) {
+            highlightStarsCompact(stars, parseInt(userRating));
+        }
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.dataset.rating);
+                ratingInput.value = rating;
+                highlightStarsCompact(stars, rating);
+            });
+            
+            star.addEventListener('mouseenter', function() {
+                highlightStarsCompact(stars, parseInt(this.dataset.rating));
+            });
+        });
+        
+        section.querySelector('.stars-input-compact').addEventListener('mouseleave', function() {
+            highlightStarsCompact(stars, parseInt(ratingInput.value) || 0);
+        });
+        
+        section.querySelector('.btn-rate-submit').addEventListener('click', function() {
+            submitRatingCompact(this);
+        });
+        
+        const delBtn = section.querySelector('.btn-rate-delete');
+        if (delBtn) {
+            delBtn.addEventListener('click', function() {
+                deleteRatingCompact(this);
+            });
+        }
+    });
+    
+    function highlightStarsCompact(stars, rating) {
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.replace('far', 'fas');
+            } else {
+                star.classList.replace('fas', 'far');
+            }
+        });
+    }
+});
+
+// Fetch functions (Submit and Delete) can remain the same as your existing logic, 
+// just update the button class names (btn-rate-submit, etc.) to match the ones above.
+function submitRatingCompact(button) {
+    const section = button.closest('.product-rating-section');
+    const rating = section.querySelector('.rating-input-compact').value;
+    const url = section.dataset.submitUrl;
+    
+    if (rating == 0) return alert("Lütfen bir yıldız seçin.");
+
+    button.disabled = true;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    const formData = new FormData();
+    formData.append('rating', rating);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.success) location.reload();
+        else { alert(data.error); button.disabled = false; button.innerHTML = originalText; }
+    });
+}
+
+function deleteRatingCompact(button) {
+    if (!confirm('Silmek istediğinize emin misiniz?')) return;
+    const section = button.closest('.product-rating-section');
+    const url = section.dataset.deleteUrl;
+
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => { if(data.success) location.reload(); });
+}
+</script>
+{% endblock %}

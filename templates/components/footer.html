@@ -1,0 +1,299 @@
+{% load static %}
+<style>
+    /* 1. GENERAL PAGE SETTINGS */
+    html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    /* To fix the space problem, we are pulling the body padding to normal */
+    body {
+        padding-top: 80px !important; /* Only the height of the header */
+    }
+
+    :root {
+        --angeles-lila: #8E68AB;
+        --angeles-turkuaz: #40C1AC;
+        --angeles-dark: #1a0805; 
+        --angeles-deep-purple: #2d1636;
+        --footer-bg: #1e1e1e; /* A more modern dark gray/black */
+    }
+
+    /* 2. FOOTER MAIN STRUCTURE */
+    .main-footer {
+        background: linear-gradient(135deg, #8E68AB 0%, #40C1AC 100%) !important;
+        border-top: 5px solid var(--angeles-lila) !important;
+        padding: 60px 0 0 !important;
+        margin-top: 80px !important;
+        width: 100% !important;
+        color: #eee !important;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .footer-container {
+        width: 90% !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        display: grid !important;
+        /* Distribute the columns more evenly */
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr; 
+        gap: 30px;
+    }
+
+    /* Column Titles */
+    .footer-col h4 { 
+        color: #fff; 
+        font-weight: 700; 
+        font-size: 1.1rem;
+        margin-bottom: 25px;
+        position: relative;
+        display: block;
+    }
+
+    /* Turquoise line below the title */
+    .footer-col h4::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 35px;
+        height: 3px;
+        background: var(--angeles-turkuaz);
+        border-radius: 10px;
+    }
+
+    /* Link Lists */
+    .footer-col ul { list-style: none; padding: 0; margin: 0; }
+    .footer-col ul li { margin-bottom: 12px; }
+    .footer-col ul li a { 
+        color: #fff !important; 
+        text-decoration: none; 
+        font-size: 0.9rem; 
+        transition: 0.3s ease;
+    }
+    .footer-col ul li a:hover { 
+        color: var(--angeles-turkuaz) !important; 
+        padding-left: 5px;
+    }
+
+    /* Brand Area and Social Media */
+    .brand-col p {
+        color: #fff;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin: 20px 0;
+    }
+
+    .social-links { display: flex !important; gap: 15px; margin-top: 20px; }
+    .social-links a {
+        transition: transform 0.3s;
+    }
+    .social-links a:hover { transform: translateY(-3px); }
+    .social-links img { 
+        width: 40px !important; 
+        height: 40px !important; 
+        object-fit: contain !important; 
+        filter: grayscale(0.2);
+    }
+    .social-links img:hover { filter: grayscale(0); }
+
+    /* WhatsApp Button */
+    .whatsapp-btn { 
+        background: #25D366; 
+        color: white !important; 
+        padding: 10px 20px; 
+        border-radius: 50px; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 8px; 
+        text-decoration: none; 
+        font-size: 0.85rem; 
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .whatsapp-btn:hover { background: #1eb954; transform: scale(1.05); }
+
+    /* 3. FOOTER BOTTOM (Copyright) */
+    .footer-bottom {
+        width: 100% !important;
+        background: rgba(0,0,0,0.3) !important;
+        margin-top: 50px;
+        padding: 25px 0 !important;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .footer-bottom-inner {
+        width: 90% !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .copyright { font-size: 0.85rem; color: #fff; }
+    .copyright strong { color: var(--angeles-lila); }
+
+    .payment-logos { display: flex; align-items: center; gap: 15px; }
+    .iyzico-badge { 
+        height: 40px !important; 
+        width: auto !important; 
+        opacity: 1 !important; 
+        background: #fff !important;
+        border-radius: 10px !important; 
+        box-shadow: 0 3px 14px rgba(64, 193, 172, 0.15), 0 1.5px 5px rgba(142,104,171,0.08);
+        padding: 4px 14px !important;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 2px solid var(--angeles-turkuaz);
+        margin-right: 5px;
+    }
+    .iyzico-badge:hover {
+        transform: scale(1.08) rotate(-3deg);
+        box-shadow: 0 6px 30px rgba(64,193,172,0.2), 0 4px 12px rgba(142,104,171,0.12);
+        border-color: var(--angeles-lila);
+        filter: grayscale(0.05) brightness(1.08);
+    }
+
+/* ================================================================
+       RESPONSIVE SETTINGS
+       ================================================================ */
+
+    /* Laptop and Small Desktop (1366px - 1024px) */
+    @media (max-width: 1200px) {
+        .footer-container {
+            grid-template-columns: 1.5fr 1fr 1fr !important; /* Reduce from 5 columns to 3 columns */
+            gap: 40px 20px;
+        }
+        .footer-col h4 { font-size: 1rem; }
+    }
+
+    /* Tablet (1024px - 768px) */
+    @media (max-width: 992px) {
+        .footer-container {
+            grid-template-columns: 1fr 1fr !important; /* 2 columns */
+        }
+    }
+
+    /* Mobile (768px and below) */
+    @media (max-width: 600px) {
+        .main-footer { padding: 40px 0 0 !important; }
+        .footer-container {
+            grid-template-columns: 1fr !important; /* Single column */
+            text-align: center;
+        }
+        .footer-col h4::after {
+            left: 50%;
+            transform: translateX(-50%); /* Center the line */
+        }
+        .social-links { justify-content: center; }
+        .footer-bottom-inner {
+            flex-direction: column;
+            text-align: center;
+        }
+        .brand-col { margin-bottom: 20px; }
+    }
+</style>
+
+<footer class="main-footer">
+    <div class="footer-container">
+        <div class="footer-col brand-col">
+            <img src="{% static STORE_LOGO %}" alt="{{ STORE_NAME }}" style="height: 60px; margin-bottom: 10px;">
+            <p>Sağlık ve yaşam kalitenizi artırmak için profesyonel çözümler sunan güvenilir adresiniz.</p>
+            
+            <a href="{{ STORE_WHATSAPP_URL }}" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> WhatsApp Destek
+            </a>
+
+            <h4 style="margin-top: 30px; border:none;">Bizi Takip Edin</h4>
+            <div class="social-links">
+                <a href="{{ STORE_INSTAGRAM_URL }}" aria-label="Instagram"><i class="fab fa-instagram" style="font-size: 1.6rem; color: #fff;"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h4>Kategoriler</h4>
+            <ul>
+                <li><a href="{% url 'elektronik-cihazlar' %}"><span>Elektronik Cihazlar</span></a></li>
+                <li><a href="{% url 'ev-ve-yasam' %}"><span>Ev ve Yaşam</span></a></li>
+                <li><a href="{% url 'hasta-bakim-malzemeleri' %}"><span>Hasta Bakım Malzemeleri</span></a></li>
+                <li><a href="{% url 'kisisel-yasam-malzemeleri' %}"><span>Kişisel Yaşam Malzemeleri</span></a></li>
+                <li><a href="{% url 'vitamin-ve-takviyeler' %}"><span>Vitamin ve Takviyeler</span></a></li>
+                <li><a href="{% url 'medikal-malzemeler' %}"><span>Medikal Malzemeler</span></a></li>
+                <li><a href="{% url 'medikal-sarf-malzemeleri' %}"><span>Medikal Sarf Malzemeleri</span></a></li>
+                <li><a href="{% url 'cok-satanlar' %}"><span>Çok Satanlar</span></a></li>
+                <li><a href="{% url 'yeni-urunler' %}"><span>Yeni Ürünler</span></a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Hızlı Erişim</h4>
+            <ul>
+                <li><a href="{% url 'profile' %}">Hesabım</a></li>
+                <li><a href="{% url 'order-tracking' %}">Sipariş Takibi</a></li>
+                <li><a href="{% url 'payment-options' %}">Ödeme Seçenekleri</a></li>
+                <li><a href="{% url 'home' %}">Ana Sayfa</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Kurumsal</h4>
+            <ul>
+                <li><a href="{% url 'privacy-policy' %}">KVKK Politikası</a></li>
+                <li><a href="{% url 'distance-sales-contract-text' %}">Mesafeli Satış Sözleşmesi</a></li>
+                <li><a href="{% url 'pre-information-text' %}">Ön Bilgilendirme Formu</a></li>
+                <li><a href="{% url 'return-requests' %}">İade Talepleri</a></li>
+                <li><a href="{% url 'new-privacy-policy' %}">Gizlilik Politikası</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>Hakkımızda</h4>
+            <ul>
+                <li><a href="{% url 'about-us' %}">Hakkımızda</a></li>
+                <li><a href="{% url 'contact' %}">İletişim</a></li>
+                <li><a href="{% url 'warranty-and-returns' %}">Garanti & İade</a></li>
+                <li><a href="{% url 'security-policy' %}">Güvenlik Politikası</a></li>
+                <li><a href="{% url 'vision-mission' %}">Vizyon & Misyon</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="footer-bottom-inner" style="flex-direction: row; gap: 30px; align-items: center; flex-wrap: wrap;">
+            <div class="copyright" style="flex: 1; min-width: 200px;">
+                &copy; 2025-2026 <strong>{{ STORE_NAME }}</strong>. Demo amaçlı örnek mağaza.
+            </div>
+
+            <!-- Developer Credit Section -->
+            <div class="developer-credit" style="text-align: center; flex: 1; min-width: 250px; padding: 0 15px;">
+                <p style="color: #fff; font-size: 0.8rem; margin: 0 0 8px 0; line-height: 1.5;">
+                    Bu web sitesinin tasarımı ve geliştirmesi tarafımdan yapılmıştır.
+                </p>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
+                    <a href="https://github.com/StrangePhoton" target="_blank" rel="noopener noreferrer" 
+                       style="display: flex; align-items: center; gap: 6px; color: #fff; text-decoration: none; transition: 0.3s; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,0.1);"
+                       onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='translateY(-2px)'"
+                       onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateY(0)'">
+                        <i class="fab fa-github" style="font-size: 1.2rem;"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/h%C3%BCseyin-g%C3%BCl-85139612b/" target="_blank" rel="noopener noreferrer"
+                       style="display: flex; align-items: center; gap: 6px; color: #fff; text-decoration: none; transition: 0.3s; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,0.1);"
+                       onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='translateY(-2px)'"
+                       onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateY(0)'">
+                        <i class="fab fa-linkedin" style="font-size: 1.2rem;"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="payment-logos" style="flex: 0 0 auto;">
+                <span style="font-size: 0.7rem; color: #fff;">GÜVENLİ ÖDEME:</span>
+                <img src="{% static 'images/izico.png' %}" class="iyzico-badge">
+            </div>
+        </div>
+    </div>
+    </div>
+</footer>

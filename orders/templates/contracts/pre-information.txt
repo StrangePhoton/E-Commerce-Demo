@@ -1,0 +1,28 @@
+ÖN BİLGİLENDİRME FORMU
+
+1. SATICI BİLGİLERİ
+Ticari Ünvan: {{ STORE_NAME }}
+Web Sitesi: {{ STORE_DOMAIN }}
+
+2. ALICI BİLGİLERİ
+Ad Soyad: {{ user.get_full_name }}
+E-posta: {{ user.email }}
+
+3. SÖZLEŞME KONUSU ÜRÜNLER
+{% for item in items %}
+- {{ item.product.name }} | {{ item.quantity }} adet | {{ item.price }} TL
+{% endfor %}
+
+4. TOPLAM BEDEL
+{{ order.total_price }} TL
+
+5. MEDİKAL ÜRÜNLERE İLİŞKİN ÖNEMLİ BİLGİ
+Satın alınan ürünler 6502 sayılı TKHK ve
+Mesafeli Sözleşmeler Yönetmeliği'nin
+15/1-ç maddesi uyarınca **cayma hakkı kapsamı dışındadır**.
+
+6. TESLİMAT VE İFA
+Ürünler, sipariş onayından sonra mevzuata uygun şekilde
+paketlenerek kargoya verilir.
+
+Bilgilendirme Tarihi: {{ generated_at|date:"d.m.Y H:i" }}

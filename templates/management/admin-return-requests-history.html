@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Geçmiş İade Talepleri | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --admin-primary: #8E68AB;
+        --admin-secondary: #40C1AC;
+        --bg-light: #f4f7f6;
+        --text-dark: #2d3436;
+    }
+
+    .admin-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: calc(100vh - 90px);
+        background-color: var(--bg-light);
+        align-items: start;
+    }
+
+    .admin-sidebar {
+        background: white;
+        padding: 30px 20px;
+        border-right: 1px solid #eee;
+        min-height: calc(100vh - 90px);
+        height: 100%;
+    }
+
+    .admin-content {
+        padding: 40px;
+    }
+
+    .dashboard-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: var(--text-dark);
+    }
+
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .search-container {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .search-container input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+
+    .search-container input:focus {
+        outline: none;
+        border-color: var(--admin-primary);
+        box-shadow: 0 0 0 3px rgba(142, 104, 171, 0.1);
+    }
+
+    .btn-search {
+        padding: 12px 20px;
+        background: var(--admin-primary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-search:hover {
+        background: #764ba2;
+    }
+
+    .btn-clear {
+        padding: 12px 20px;
+        background: #95a5a6;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-clear:hover {
+        background: #7f8c8d;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        overflow: hidden;
+        border: 1px solid #eee;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .admin-table th {
+        background: #fafafa;
+        padding: 15px 20px;
+        font-weight: 600;
+        color: #7f8c8d;
+        border-bottom: 2px solid #f0f0f0;
+        font-size: 0.9rem;
+    }
+
+    .admin-table td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    .admin-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .btn-action {
+        padding: 8px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s;
+    }
+
+    .btn-view {
+        background: #e3f2fd;
+        color: #1976d2;
+        border: 1px solid #bbdefb;
+    }
+
+    .btn-view:hover {
+        background: #bbdefb;
+    }
+
+    .search-info {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        background: #e3f2fd;
+        border-left: 4px solid #1976d2;
+        border-radius: 5px;
+        color: #1565c0;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="admin-layout">
+    {% include 'includes/admin-sidebar-include.html' %}
+
+    <main class="admin-content">
+        <h1 class="dashboard-title">
+            <i class="fas fa-history" style="color: var(--admin-primary); margin-right: 10px;"></i>
+            Geçmiş İade Talepleri
+        </h1>
+
+        <div class="content-header">
+            <form method="GET" action="{% url 'admin-return-requests-history' %}" class="search-container">
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ search_query }}" 
+                    placeholder="Sipariş No, Müşteri, Ürün adı ile ara..."
+                    style="flex: 1;"
+                >
+                <button type="submit" class="btn-search">
+                    <i class="fas fa-search"></i> Ara
+                </button>
+                {% if search_query %}
+                <a href="{% url 'admin-return-requests-history' %}" class="btn-clear">
+                    <i class="fas fa-times"></i> Temizle
+                </a>
+                {% endif %}
+            </form>
+        </div>
+
+        {% if search_query %}
+        <div class="search-info">
+            <i class="fas fa-info-circle"></i>
+            "{{ search_query }}" için <strong>{{ return_requests|length }}</strong> sonuç bulundu.
+        </div>
+        {% endif %}
+
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ürün</th>
+                        <th>Müşteri</th>
+                        <th>Sipariş</th>
+                        <th>Miktar</th>
+                        <th>Sebep</th>
+                        <th>Durum</th>
+                        <th>İşlem Tarihi</th>
+                        <th>İşlemi Yapan</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in return_requests %}
+                    <tr>
+                        <td><strong>#{{ request.id }}</strong></td>
+                        <td>
+                            <strong>{{ request.order_item.product.name }}</strong>
+                            {% if request.order_item.size or request.order_item.color %}
+                            <br><small style="color: #7f8c8d;">
+                                {% if request.order_item.size %}Beden: {{ request.order_item.size }}{% endif %}
+                                {% if request.order_item.color %} | Renk: {{ request.order_item.color }}{% endif %}
+                            </small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ request.user.get_full_name|default:request.user.email }}
+                            <br><small style="color: #7f8c8d;">{{ request.user.email }}</small>
+                        </td>
+                        <td>
+                            <a href="{% url 'admin-order-list' %}" style="color: #8e68ab; font-weight: 600;">
+                                #{{ request.order.id }}
+                            </a>
+                        </td>
+                        <td><strong>{{ request.quantity }}</strong> Adet</td>
+                        <td>
+                            {{ request.get_reason_display }}
+                            {% if request.reason_detail %}
+                            <br><small style="color: #7f8c8d; font-size: 0.85rem;">{{ request.reason_detail|truncatewords:10 }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ request.status }}">
+                                {{ request.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if request.processed_at %}
+                            {{ request.processed_at|date:"d.m.Y" }}<br>
+                            <small style="color: #7f8c8d;">{{ request.processed_at|date:"H:i" }}</small>
+                            {% else %}
+                            <span style="color: #95a5a6;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if request.processed_by %}
+                            {{ request.processed_by.get_full_name|default:request.processed_by.email }}
+                            {% else %}
+                            <span style="color: #95a5a6;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'admin-return-request-detail' request.id %}" class="btn-action btn-view">
+                                <i class="fas fa-eye"></i> Detay
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 50px; color: #999;">
+                            {% if search_query %}
+                            Arama kriterlerinize uygun geçmiş iade talebi bulunamadı.
+                            {% else %}
+                            Henüz geçmiş iade talebi bulunmuyor.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+{% endblock %}

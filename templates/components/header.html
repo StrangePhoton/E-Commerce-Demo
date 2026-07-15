@@ -1,0 +1,405 @@
+{% load static %}
+
+<style>
+    :root {
+        --angeles-lila: #8E68AB;
+        --angeles-turkuaz: #40C1AC;
+        --angeles-text: #333;
+        --angeles-yesil: #c5d9a4;
+        --header-bg: #f8fafc;
+    }
+
+    /* HEADER: Make the height flexible */
+    .main-header {
+        background: var(--header-bg) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06) !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 80px !important;
+        z-index: 10000 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* BODY: Leave a space equal to the height of the header */
+    body {
+        padding-top: 80px !important; 
+        margin: 0 !important;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    main, .main-content, #content, .container {
+        margin-top: 0 !important;
+        padding-top: 20px !important;
+    }
+
+    .header-container {
+        width: 100% !important;
+        padding: 0 40px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        position: relative !important;
+    }
+
+    .logo-container img {
+        height: 100px !important;
+        width: auto !important;
+        display: block !important;
+        transition: 0.3s ease;
+    }
+
+    .logo-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    /* CATEGORIES BUTTON */
+    .categories-dropdown { position: relative !important; }
+    #categoriesButton {
+        background: white !important;
+        border: 1.5px solid var(--angeles-lila) !important;
+        color: var(--angeles-lila) !important;
+        padding: 8px 16px !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        cursor: pointer !important;
+        font-size: 0.9rem !important;
+    }
+
+    .categories-menu-content {
+        position: absolute !important;
+        top: 60px !important;
+        left: 0 !important;
+        background: white !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+        width: 260px !important;
+        display: none !important;
+        flex-direction: column !important;
+        padding: 10px 0 !important;
+        z-index: 10001 !important;
+        border: 1px solid #eee !important;
+    }
+
+    .categories-menu-content.active { display: flex !important; }
+    .categories-menu-content a {
+        padding: 12px 20px !important;
+        text-decoration: none !important;
+        color: var(--angeles-text) !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+
+    /* ALIGNMENTS */
+    .header-left { 
+        flex: 1; 
+        display: flex; 
+        align-items: center; 
+        gap: 20px; 
+        justify-content: flex-start;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .header-left-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    /* Search Container - 20px to the right of the logo */
+    .search-container {
+        position: relative;
+        z-index: 2;
+        margin-left: 20px;
+    }
+    
+    #searchDropdown input:focus {
+        border-color: var(--angeles-turkuaz);
+    }
+    
+    #searchToggleBtn:hover {
+        background: var(--angeles-lila) !important;
+        color: white !important;
+    }
+    
+    /* RIGHT SIDE: Align only the auth-wrapper to the right */
+    .header-right { 
+        flex: 1; 
+        display: flex; 
+        justify-content: flex-end; 
+        align-items: center; 
+    }
+
+    /* COVER: Center the button group and link vertically */
+    .auth-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+    }
+
+    /* Group for buttons to be side by side */
+    .auth-buttons-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .header-center { 
+        position: absolute; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        z-index: 0;
+    }
+    
+    .header-center a {
+        cursor: pointer;
+        display: block;
+    }
+
+    .company-name {
+        font-size: 50px !important;
+        font-weight: 900 !important;
+        background: linear-gradient(135deg, #8E68AB 0%, #40C1AC 100%) !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        white-space: nowrap;
+        transition: 0.3s ease;
+    }
+
+    /* BUTTONS */
+    .admin-link, .auth-link-login, .auth-link-profile, .auth-link-signup, .logout-btn, .cart-icon-btn {
+        padding: 8px 15px !important; /* The same padding for all buttons */
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        text-decoration: none !important;
+        font-size: 0.85rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        white-space: nowrap;
+        height: 38px !important; /* The height is fixed for all buttons */
+        box-sizing: border-box !important;
+    }
+
+    .auth-link-login, .admin-link, .auth-link-profile { background-color: var(--angeles-turkuaz) !important; color: white !important; }
+    .auth-link-signup, .logout-btn { background-color: var(--angeles-lila) !important; color: white !important; border: none; }
+    
+    .cart-icon-btn { 
+        background-color: var(--angeles-yesil); 
+        color: white !important; 
+        padding: 8px 15px !important; 
+        border-radius: 10px !important; 
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .cart-badge {
+        position: absolute !important;
+        top: -8px !important;
+        right: -8px !important;
+        background-color: red !important;
+        color: white !important;
+        font-size: 0.7rem !important;
+        font-weight: 700 !important;
+        min-width: 18px !important;
+        height: 18px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        border: 2px solid white !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    }
+
+    a.back-home-link {
+        font-size: 1.0rem !important;
+        font-weight: 700 !important;
+        color: #666666 !important; /* Prevent the white from turning into a dark gray */
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+        margin-top: 4px !important;
+        display: block !important;
+    }
+
+    a.back-home-link:hover {
+        color: var(--angeles-lila) !important;
+        text-decoration: underline !important;
+    }
+
+    @media (max-width: 1400px) {
+        .header-container { padding: 0 20px !important; }
+        .company-name { font-size: 50px !important; }
+    }
+
+    @media (max-width: 1200px) {
+        .company-name { font-size: 50px !important; }
+        .logo-container img { height: 55px !important; }
+        .admin-link, .auth-link-login, .auth-link-profile, .auth-link-signup, .logout-btn { 
+            padding: 6px 10px !important; 
+            font-size: 0.75rem !important; 
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .header-center { display: none; }
+        .header-left { 
+            flex: none; 
+            justify-content: flex-start;
+        }
+        .search-container { 
+            margin-left: 20px;
+        }
+        #searchDropdown { 
+            width: 300px; 
+            left: 0; 
+            right: auto;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        #searchToggleBtn span { display: none; }
+        #searchDropdown { width: 280px; }
+    }
+</style>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="header-left">
+            {% if request.resolver_match.url_name != 'home' %}
+            <div class="categories-dropdown">
+                <button id="categoriesButton">
+                    <i class="fas fa-th-large"></i>
+                    <span>Kategoriler</span>
+                </button>
+                <div id="categoriesMenu" class="categories-menu-content">
+                    <a href="{% url 'hasta-bakim-malzemeleri' %}"><i class="fas fa-heartbeat"></i> Hasta Bakım</a>
+                    <a href="{% url 'medikal-sarf-malzemeleri' %}"><i class="fas fa-notes-medical"></i> Medikal Sarf</a>
+                    <a href="{% url 'medikal-malzemeler' %}"><i class="fas fa-stethoscope"></i> Medikal Malzemeler</a>
+                    <a href="{% url 'kisisel-yasam-malzemeleri' %}"><i class="fas fa-spa"></i> Kişisel Yaşam</a>
+                    <a href="{% url 'vitamin-ve-takviyeler' %}"><i class="fas fa-capsules"></i> Vitamin & Takviye</a>
+                    <a href="{% url 'ev-ve-yasam' %}"><i class="fas fa-home"></i> Ev ve Yaşam</a>
+                    <a href="{% url 'elektronik-cihazlar' %}"><i class="fas fa-microchip"></i> Elektronik Cihazlar</a>
+                    <div style="border-top: 1px solid #f0f0f0; margin: 8px 0;"></div>
+                    <a href="{% url 'yeni-urunler' %}"><i class="fas fa-newspaper"></i> Yeni Ürünler</a>
+                    <a href="{% url 'cok-satanlar' %}" style="color: var(--angeles-lila);">
+                        <i class="fas fa-fire"></i> <b>En Çok Satanlar</b>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="logo-wrapper">
+                <a href="{% url 'home' %}" class="logo-container">
+                    <img src="{% static STORE_LOGO %}" alt="{{ STORE_NAME }}">
+                </a>
+            </div>
+
+            <!-- Search Button - 20px to the right of the logo -->
+            <div class="search-container">
+                <button id="searchToggleBtn" style="background: white; border: 1.5px solid var(--angeles-lila); color: var(--angeles-lila); padding: 8px 16px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
+                    <i class="fas fa-search"></i>
+                    <span>Ara</span>
+                </button>
+                <div id="searchDropdown" style="position: absolute; top: 50px; left: 0; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); width: 350px; display: none; z-index: 10001; border: 1px solid #eee; padding: 20px;">
+                    <form method="GET" action="{% url 'search-results' %}" style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" name="q" id="searchInput" placeholder="Ürün ara..." style="flex: 1; padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9rem; outline: none; transition: border-color 0.3s;" autocomplete="off">
+                        <button type="submit" style="background: var(--angeles-turkuaz); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.3s;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-center">
+            <a href="{% url 'home' %}" style="text-decoration: none;">
+                <span class="company-name">{{ STORE_TAGLINE }}</span>
+            </a>
+        </div>
+
+        <div class="header-right">
+            <div class="auth-wrapper">
+                <div class="auth-buttons-group">
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff or user.is_superuser %}
+                            <a href="{% url 'admin-dashboard' %}" class="admin-link"><i class="fas fa-user-shield"></i> Yönetim</a>
+                        {% endif %}
+                        <a href="{% url 'profile' %}" class="auth-link-profile"><i class="fas fa-user-circle"></i> Profil</a>
+                        <form method="POST" action="{% url 'logout' %}" style="display:inline; margin: 0;">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Çıkış</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="auth-link-login">Giriş</a>
+                        <a href="{% url 'signup' %}" class="auth-link-signup">Üye Ol</a>
+                    {% endif %}
+                
+                    <a href="{% url 'view_cart' %}" class="cart-icon-btn">
+                        <i class="fas fa-shopping-basket"></i>
+                        {% if cart_count > 0 %}
+                            <span class="cart-badge">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+            
+                <a href="{% url 'home' %}" class="back-home-link">
+                    Ana Sayfaya Dön
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('categoriesButton');
+        const menu = document.getElementById('categoriesMenu');
+        if (btn && menu) {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                menu.classList.toggle('active');
+            });
+            document.addEventListener('click', function (e) {
+                if (!menu.contains(e.target) && e.target !== btn) {
+                    menu.classList.remove('active');
+                }
+            });
+        }
+
+        // Search Dropdown Toggle
+        const searchToggleBtn = document.getElementById('searchToggleBtn');
+        const searchDropdown = document.getElementById('searchDropdown');
+        if (searchToggleBtn && searchDropdown) {
+            searchToggleBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                searchDropdown.style.display = searchDropdown.style.display === 'none' ? 'block' : 'none';
+                if (searchDropdown.style.display === 'block') {
+                    setTimeout(() => document.getElementById('searchInput').focus(), 100);
+                }
+            });
+            document.addEventListener('click', function (e) {
+                if (!searchDropdown.contains(e.target) && e.target !== searchToggleBtn) {
+                    searchDropdown.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>

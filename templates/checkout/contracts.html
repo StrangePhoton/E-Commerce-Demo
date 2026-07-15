@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block title %}Sözleşmeler | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<style>
+    .checkout-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+    .checkout-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    .checkout-steps {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 30px;
+        background: #fcfaff;
+        padding: 15px;
+        border-radius: 12px;
+    }
+    .checkout-step { 
+        color: #94a3b8; 
+        font-weight: 600; 
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+        padding-bottom: 5px;
+    }
+    .checkout-step:hover:not(.active) {
+        color: #69b3a2;
+        border-bottom: 2px solid #69b3a2;
+    }
+    .checkout-step.active { 
+        color: #8e68ab; 
+        border-bottom: 2px solid #8e68ab;
+        cursor: default;
+    }
+    .checkout-step.disabled {
+        color: #cbd5e1;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    
+    .contract-box {
+        width: 100%;
+        height: 250px;
+        overflow-y: scroll;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 20px;
+        background: #f8fafc;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #475569;
+        margin-bottom: 20px;
+    }
+    .contract-check {
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.95rem;
+    }
+    .btn-primary {
+        background: #8e68ab;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: 0.3s;
+    }
+    .btn-primary:hover { background: #69b3a2; }
+</style>
+
+<div class="checkout-container">
+  <div class="checkout-card">
+
+    <div class="checkout-steps">
+      <a href="{% url 'checkout-address' %}" class="checkout-step">Adres</a>
+      <div class="checkout-step active">Sözleşme</div>
+      {% if contracts_approved %}
+        <a href="{% url 'checkout-payment' %}" class="checkout-step">Ödeme</a>
+      {% else %}
+        <span class="checkout-step disabled">Ödeme</span>
+      {% endif %}
+    </div>
+
+    <h1 class="checkout-title" style="color: #2c3e50; margin-bottom: 25px;">Sözleşme Onayı</h1>
+
+    <h3 style="font-size: 1rem; color: #8e68ab;">1. Ön Bilgilendirme Formu</h3>
+    <div class="contract-box">
+      {# View'dan gelen değişkeni kullanıyoruz #}
+      {{ pre_info_text|linebreaks }}
+    </div>
+
+    <h3 style="font-size: 1rem; color: #8e68ab;">2. Mesafeli Satış Sözleşmesi</h3>
+    <div class="contract-box">
+      {# View'dan gelen değişkeni kullanıyoruz #}
+      {{ distance_contract_text|linebreaks }}
+    </div>
+
+    {% if contracts_approved %}
+      <div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+        <p style="color: #166534; font-weight: 600; margin: 0;">
+          <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+          Sözleşmeler onaylanmış. Ödeme sayfasına geçebilirsiniz.
+        </p>
+      </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="contract-check">
+        <input type="checkbox" name="pre_info" id="id_pre_info" {% if contracts_approved %}checked disabled{% else %}required{% endif %}>
+        <label for="id_pre_info" {% if contracts_approved %}style="color: #64748b;"{% endif %}>Ön Bilgilendirme Formunu okudum ve anladım.</label>
+      </div>
+
+      <div class="contract-check">
+        <input type="checkbox" name="distance_contract" id="id_distance_contract" {% if contracts_approved %}checked disabled{% else %}required{% endif %}>
+        <label for="id_distance_contract" {% if contracts_approved %}style="color: #64748b;"{% endif %}>Mesafeli Satış Sözleşmesini kabul ediyorum.</label>
+      </div>
+
+      {% if not contracts_approved %}
+        <button type="submit" class="btn-primary">
+          Sözleşmeleri Onayla ve Ödemeye Geç
+        </button>
+      {% else %}
+        <a href="{% url 'checkout-payment' %}" class="btn-primary" style="display: block; text-align: center; text-decoration: none;">
+          Ödeme Sayfasına Geç
+        </a>
+      {% endif %}
+    </form>
+
+  </div>
+</div>
+{% endblock %}

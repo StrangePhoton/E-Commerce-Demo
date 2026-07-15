@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="admin-layout">
+    {% include 'includes/admin-sidebar-include.html' %}
+    
+    <main class="admin-content">
+        <div class="content-container" style="max-width: 800px; margin: 0 auto;">
+            <div class="header-section" style="margin-bottom: 25px;">
+                <h1 style="font-size: 1.8rem; color: #333;">{{ title }}</h1>
+                <p style="color: #666;">Ana sayfa alanındaki görselleri buradan yönetebilirsiniz.</p>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+                {% csrf_token %}
+                
+                <div class="form-grid" style="display: grid; gap: 20px;">
+                    
+                    {% if form.instance.image %}
+                    <div class="current-image-preview" style="background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px dashed #ddd; text-align: center;">
+                        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #555;">Mevcut Kayıtlı Görsel</label>
+                        <img src="{{ form.instance.image.url }}" style="max-width: 100%; max-height: 250px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    </div>
+                    {% endif %}
+
+                    <div class="form-fields">
+                        {% for field in form %}
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #444;">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small style="display: block; color: #888; margin-top: 5px;">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-actions" style="border-top: 1px solid #eee; padding-top: 20px; display: flex; align-items: center; gap: 15px;">
+                        <button type="submit" class="btn-checkout" style="
+                            background-color: var(--angeles-turkuaz); 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 30px; 
+                            border-radius: 8px; 
+                            font-weight: 600; 
+                            cursor: pointer;
+                            transition: transform 0.2s;
+                        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fas fa-save"></i> Değişiklikleri Kaydet
+                        </button>
+                        
+                        <a href="{% url 'admin-home-images' %}" style="
+                            text-decoration: none; 
+                            color: #666; 
+                            font-weight: 500;
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                        ">
+                            <i class="fas fa-times"></i> İptal
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<style>
+    /* Fix file selection and text input fields */
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+    
+    .form-group input:focus {
+        border-color: var(--angeles-turkuaz);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 206, 209, 0.1);
+    }
+</style>
+{% endblock %}

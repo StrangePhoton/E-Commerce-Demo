@@ -1,0 +1,266 @@
+{% load static %}
+{# templates/components/product-card.html #}
+<style>
+    /* Keep the existing styles, only added the stock warning */
+    .product-card {
+        background: #fff;
+        border-radius: 18px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+    }
+
+    /* OUT OF STOCK STATE: Make the card slightly transparent and make the image black-white */
+    .product-card.out-of-stock {
+        opacity: 0.8;
+    }
+    .product-card.out-of-stock .product-image img {
+        filter: grayscale(1);
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(142, 104, 171, 0.12);
+        border-color: var(--angeles-yesil);
+    }
+
+    .product-image {
+        position: relative;
+        padding: 15px;
+        background: #f9f9f9;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .product-image img {
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        transition: transform 0.5s ease;
+    }
+
+    /* Stock Badges */
+    .stock-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        z-index: 5;
+        color: white;
+        text-transform: uppercase;
+    }
+
+    .badge-out {
+        background: #e74c3c; /* Red */
+        box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+    }
+
+    .badge-low {
+        background: #f39c12; /* Orange */
+        box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
+    }
+
+    /* Current Campaign Badge (If the stock badge is present, move it down) */
+    .badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: linear-gradient(135deg, var(--angeles-turkuaz), var(--angeles-yesil));
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    /* If both badges are present, move the campaign badge down */
+    .has-stock-badge .badge {
+        top: 42px;
+    }
+
+    .product-card:hover .product-image img {
+        transform: scale(1.08);
+    }
+
+    .btn-favorite {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 35px;
+        height: 35px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ccc;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        transition: 0.3s;
+        z-index: 3;
+        text-decoration: none;
+    }
+
+    .btn-favorite:hover { color: #e74c3c; transform: scale(1.1); }
+    .btn-favorite.favorited { color: #e74c3c; }
+
+    .product-info {
+        padding: 15px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .product-info h3 {
+        font-size: 0.95rem;
+        color: var(--angeles-text);
+        margin: 0 0 10px 0;
+        line-height: 1.4;
+        height: 2.8em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .price {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--angeles-lila);
+        margin: 0;
+    }
+
+    .card-actions, .price-button-container {
+        padding: 0 15px 15px 15px;
+    }
+
+    .btn-cart, .btn-price-info {
+        width: 100%;
+        padding: 10px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .btn-cart {
+        background: var(--angeles-lila);
+        color: white;
+    }
+
+    .btn-cart:hover {
+        background: var(--angeles-turkuaz);
+        box-shadow: 0 5px 15px rgba(105, 179, 162, 0.3);
+    }
+
+    /* Passive Button */
+    .btn-cart.disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .btn-price-info {
+        background: #f0f0f0;
+        color: var(--angeles-text);
+    }
+
+    .btn-price-info:hover {
+        background: var(--angeles-yesil);
+        color: var(--angeles-text);
+    }
+</style>
+
+<div class="product-card {% if product.display_stock <= 0 %}out-of-stock{% endif %} {% if product.display_stock <= 10 and product.display_stock > 0 %}has-stock-badge{% endif %}">
+  <div class="product-image">
+    <a href="{% url 'product_detail' product.slug %}">
+        {% if product.get_main_image %}
+            <img src="{{ product.get_main_image }}" alt="{{ product.name }}">
+        {% else %}
+            <img src="{% static STORE_LOGO %}" alt="Resim Yok">
+        {% endif %}
+    </a>
+
+    {# Stok Uyarı Rozetleri #}
+    {% if product.display_stock <= 0 %}
+        <span class="stock-badge badge-out">TÜKENDİ</span>
+    {% elif product.display_stock <= 10 %}
+        <span class="stock-badge badge-low">SON {{ product.display_stock }} ADET!</span>
+    {% endif %}
+    
+    {% if product.bulk_discounts.exists %}
+      <span class="badge">Kampanya</span>
+    {% endif %}
+    
+    {% if user.is_authenticated %}
+      {% if product.id in favorites %}
+        <a href="{% url 'remove_from_favorites' product.id %}" class="btn-favorite favorited" title="Favorilerden Kaldır" onclick="event.stopPropagation();">
+          <i class="fas fa-heart"></i>
+        </a>
+      {% else %}
+        <a href="{% url 'add_to_favorites' product.id %}" class="btn-favorite" title="Favorilere Ekle" onclick="event.stopPropagation();">
+          <i class="far fa-heart"></i>
+        </a>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="product-info">
+    <a href="{% url 'product_detail' product.slug %}" style="text-decoration: none;">
+        <h3>{{ product.name }}</h3>
+    </a>
+    {% if user.is_authenticated %}
+      <p class="price">{{ product.price|floatformat:2 }} ₺</p>
+    {% endif %}
+  </div>
+  
+  {% if not user.is_authenticated %}
+    <div class="price-button-container">
+      <button class="btn-price-info" onclick="showPricePopup()">Fiyatı Gör</button>
+    </div>
+  {% endif %}
+
+  <div class="card-actions">
+    {% if user.is_authenticated %}
+      {% if product.display_stock > 0 %}
+        {% if product.has_sizes or product.has_colors %}
+          {# Variant'ı olan ürünler için detay sayfasına yönlendir #}
+          <a href="{% url 'product_detail' product.slug %}" class="btn-cart">
+              Sepete Ekle <i class="fas fa-shopping-cart"></i>
+          </a>
+        {% else %}
+          {# Variant'ı olmayan ürünler için direkt POST form #}
+          <form action="{% url 'add_to_cart' product.id %}" method="post" style="margin: 0; display: inline-block; width: 100%;">
+            {% csrf_token %}
+            <button type="submit" class="btn-cart">
+                Sepete Ekle <i class="fas fa-shopping-cart"></i>
+            </button>
+          </form>
+        {% endif %}
+      {% else %}
+        <button class="btn-cart disabled">
+            Stokta Yok <i class="fas fa-times-circle"></i>
+        </button>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

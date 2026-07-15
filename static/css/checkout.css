@@ -1,0 +1,158 @@
+/* ===== Checkout Base ===== */
+.checkout-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 24px;
+}
+
+.checkout-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+.checkout-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.checkout-subtitle {
+    color: #6b7280;
+    margin-bottom: 30px;
+}
+
+/* ===== Progress Bar ===== */
+.checkout-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.checkout-step {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    color: #9ca3af;
+    position: relative;
+}
+
+.checkout-step.active {
+    font-weight: 600;
+    color: #2563eb;
+}
+
+.checkout-step::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    right: -50%;
+    width: 100%;
+    height: 2px;
+    background: #e5e7eb;
+}
+
+.checkout-step:last-child::after {
+    display: none;
+}
+
+/* ===== Form ===== */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 15px;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+    background: #2563eb;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: #1e40af;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    padding: 12px 20px;
+    border-radius: 10px;
+    color: #374151;
+    text-decoration: none;
+}
+
+/* ===== Contract Box ===== */
+.contract-box {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px;
+    height: 260px;
+    overflow-y: auto;
+    background: #f9fafb;
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+.contract-check {
+    margin-top: 14px;
+}
+
+/* ===== Payment ===== */
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.payment-card {
+    border: 2px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 20px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.payment-card:hover {
+    border-color: #2563eb;
+}
+
+.payment-card input {
+    display: none;
+}
+
+.payment-card.selected {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .checkout-container {
+        padding: 16px;
+    }
+}

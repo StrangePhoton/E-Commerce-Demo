@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="admin-layout">
+    {% include 'includes/admin-sidebar-include.html' %}
+
+    <main class="admin-content">
+        <h1 class="dashboard-title">Mesaj Detayı</h1>
+
+        <div class="table-container" style="padding:30px">
+            <p><strong>Konu:</strong> {{ message.subject }}</p>
+            <p><strong>Gönderen:</strong> {{ message.name }}</p>
+            <p><strong>E-posta:</strong> {{ message.email }}</p>
+            <p><strong>Telefon:</strong> {{ message.phone|default:"-" }}</p>
+            <hr>
+            <p>{{ message.message|linebreaks }}</p>
+        </div>
+    </main>
+</div>
+
+{% endblock %}

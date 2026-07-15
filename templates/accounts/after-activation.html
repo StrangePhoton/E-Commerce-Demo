@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hesap Aktifleştirildi | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 200px); display:flex; align-items:center; justify-content:center; padding:40px;">
+    <div style="
+        background:#fff;
+        max-width:520px;
+        width:100%;
+        padding:40px;
+        border-radius:20px;
+        box-shadow:0 15px 35px rgba(105,179,162,0.15);
+        text-align:center;
+        border:1px solid #edf2f7;
+    ">
+        <div style="
+            width:80px;
+            height:80px;
+            margin:0 auto 20px;
+            border-radius:50%;
+            background:#69b3a2;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            font-size:2.2rem;
+        ">
+            <i class="fas fa-check"></i>
+        </div>
+
+        <h2 style="color:#334155; font-weight:700; margin-bottom:15px;">
+            Hesabınız Aktifleştirildi 🎉
+        </h2>
+
+        <p style="color:#64748b; font-size:0.95rem; line-height:1.6;">
+            Mail adresiniz başarıyla doğrulandı.
+            <br>
+            Artık hesabınıza giriş yapabilirsiniz.
+        </p>
+
+        <a href="{% url 'login' %}" class="btn-primary" style="margin-top:25px;">
+            Giriş Yap
+        </a>
+    </div>
+</div>
+{% endblock %}

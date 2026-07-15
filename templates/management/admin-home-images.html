@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="admin-layout">
+    {% include 'includes/admin-sidebar-include.html' %}
+    
+    <main class="admin-content">
+        <div class="content-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h1>Ana Sayfa Görsellerini Yönet</h1>
+            <a href="{% url 'admin-slide-add' %}" class="btn-add-product" style="background-color: var(--angeles-turkuaz); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">
+                <i class="fas fa-plus"></i> Yeni Slide Ekle
+            </a>
+        </div>
+
+        <div class="slides-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+            {% for slide in slides %}
+            <div class="slide-card" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <img src="{{ slide.image.url }}" style="width: 100%; height: 180px; object-fit: cover;">
+                <div style="padding: 15px;">
+                    <h4 style="margin: 0;">{{ slide.title|default:"Başlıksız Slide" }}</h4>
+                    <p style="color: #666; font-size: 0.9rem;">Sıralama: {{ slide.order }}</p>
+                    <div style="margin-top: 10px; display: flex; gap: 15px; align-items: center;">
+                        <a href="{% url 'admin-slide-edit' slide.pk %}" 
+                           style="color: var(--angeles-turkuaz); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+                           <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                    
+                        <a href="{% url 'admin-slide-delete' slide.pk %}" 
+                           onclick="return confirm('Silmek istediğinize emin misiniz?')"
+                           style="color: #e74c3c; text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+                           <i class="fas fa-trash"></i> Sil
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>Henüz eklenmiş bir slide bulunmuyor.</p>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+{% endblock %}

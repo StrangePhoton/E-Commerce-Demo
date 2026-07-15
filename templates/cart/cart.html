@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sepetim | {{ STORE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --angeles-lila: #8e68ab;
+        --angeles-turkuaz: #69b3a2;
+        --angeles-yesil: #c5d9a4;
+        --angeles-text: #3d4c6d;
+        --soft-bg: #f9fbfa;
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        background-color: var(--soft-bg);
+        color: var(--angeles-text);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .cart-page-wrapper {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .cart-title {
+        font-size: 2.2rem;
+        color: var(--angeles-lila);
+        margin-bottom: 30px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .cart-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, var(--angeles-lila), var(--angeles-turkuaz), transparent);
+    }
+
+    .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 40px;
+        align-items: start;
+    }
+
+    /* Product Cards */
+    .cart-item-card {
+        display: grid;
+        grid-template-columns: 140px 1fr 200px;
+        gap: 25px;
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(142, 104, 171, 0.05);
+        margin-bottom: 20px;
+        border: 1px solid rgba(105, 179, 162, 0.1);
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .cart-item-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--angeles-lila);
+        box-shadow: 0 15px 35px rgba(142, 104, 171, 0.1);
+    }
+
+    .item-image img {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 15px;
+        background: var(--soft-bg);
+    }
+
+    .item-details h3 {
+        font-size: 1.1rem;
+        color: var(--angeles-text);
+        margin-bottom: 8px;
+        padding-right: 40px;
+        font-weight: 600;
+    }
+
+    /* Price Field */
+    .price-section { margin-bottom: 15px; }
+    .price-tag { color: var(--angeles-turkuaz); font-weight: 700; font-size: 1.2rem; }
+    .old-price { text-decoration: line-through; color: #bbb; font-size: 0.9rem; margin-right: 8px; }
+
+    /* Quantity Control */
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        background: var(--soft-bg);
+        border-radius: 12px;
+        width: fit-content;
+        border: 1px solid #eee;
+        overflow: hidden;
+        margin-top: 15px;
+    }
+
+    .qty-btn {
+        background: none;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        color: var(--angeles-lila);
+        font-size: 1rem;
+        transition: background 0.2s;
+    }
+
+    .qty-btn:hover { background: #e9ecef; }
+
+    .qty-input {
+        width: 45px;
+        border: none;
+        background: transparent;
+        text-align: center;
+        font-weight: 700;
+        color: var(--angeles-text);
+        font-size: 1rem;
+    }
+
+    /* Campaign Notifications */
+    .campaign-badge {
+        display: inline-block;
+        background: rgba(39, 174, 96, 0.1);
+        color: #27ae60;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        border: 1px solid rgba(39, 174, 96, 0.3);
+        margin-top: 8px;
+    }
+
+    .next-deal-info {
+        font-size: 0.75rem;
+        color: var(--angeles-lila);
+        margin-top: 8px;
+        background: #f4f0f7;
+        padding: 6px 10px;
+        border-radius: 8px;
+        display: block;
+        width: fit-content;
+    }
+
+    .remove-item-top {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: #ddd;
+        font-size: 1.2rem;
+        transition: var(--transition);
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+    .remove-item-top:hover { color: #e74c3c; transform: rotate(90deg); }
+
+    /* Order Summary */
+    .order-summary-card {
+        background: white;
+        padding: 35px;
+        border-radius: 25px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+        border-top: 5px solid var(--angeles-yesil);
+    }
+
+    .summary-total {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px dashed var(--soft-bg);
+        color: var(--angeles-lila);
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .btn-checkout {
+        display: block;
+        width: 100%;
+        background: linear-gradient(135deg, var(--angeles-lila), var(--angeles-turkuaz));
+        color: white;
+        text-align: center;
+        padding: 18px;
+        border-radius: 15px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-top: 30px;
+        transition: var(--transition);
+        box-shadow: 0 10px 20px rgba(142, 104, 171, 0.2);
+    }
+
+    .btn-checkout:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(105, 179, 162, 0.3); }
+
+    /* MODAL CSS (Modal Design) */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(61, 76, 109, 0.6);
+        backdrop-filter: blur(5px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .custom-modal-overlay.active { display: flex; opacity: 1; }
+    .custom-modal {
+        background: white;
+        padding: 40px;
+        border-radius: 25px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+    }
+    .custom-modal-overlay.active .custom-modal { transform: translateY(0); }
+    .modal-icon { font-size: 3.5rem; color: #e74c3c; margin-bottom: 20px; }
+    .modal-buttons { display: flex; gap: 15px; margin-top: 30px; }
+    .btn-modal { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; }
+    .btn-cancel { background: #f4f4f4; color: #555; }
+    .btn-confirm-delete { background: #e74c3c; color: white; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade { animation: fadeIn 0.4s ease forwards; }
+
+    @media (max-width: 992px) { .cart-layout { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) {
+        .cart-item-card { grid-template-columns: 100px 1fr; }
+        .item-image img { width: 100px; height: 100px; }
+        .item-total-side { grid-column: span 2; border-top: 1px solid #eee; padding-top: 15px; margin-top: 10px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-page-wrapper">
+    <h1 class="cart-title">Sepetim</h1>
+
+    {% if cart.items.all %}
+    <div class="cart-layout">
+        
+        <div class="cart-items-list">
+            {% for item in cart.items.all %}
+            {% if item.product.is_active %}
+            <div class="cart-item-card animate-fade">
+                <button type="button" onclick="showDeleteModal('{{ item.id }}')" class="remove-item-top">
+                    <i class="fas fa-times-circle"></i>
+                </button>
+
+                <div class="item-image">
+                    {% if item.product.images.all %}
+                    <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.name }}">
+                    {% else %}
+                    <img src="{% static STORE_LOGO %}" alt="{{ STORE_NAME }}">
+                    {% endif %}
+                </div>
+
+                <div class="item-details">
+                    <h3>{{ item.product.name }}</h3>
+                    {% if item.size or item.color %}
+                        <div style="margin-top: 5px; margin-bottom: 10px;">
+                            {% if item.size %}
+                                <span style="display: inline-block; padding: 4px 10px; background: #f0f0f0; border-radius: 6px; font-size: 0.85rem; margin-right: 5px;">
+                                    <i class="fas fa-ruler"></i> Beden: {{ item.size }}
+                                </span>
+                            {% endif %}
+                            {% if item.color %}
+                                <span style="display: inline-block; padding: 4px 10px; background: #f0f0f0; border-radius: 6px; font-size: 0.85rem;">
+                                    <i class="fas fa-palette"></i> Renk: {{ item.color }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% with info=item.get_discount_info %}
+                    <div class="price-section">
+                        {% if info.applied %}
+                            <span class="old-price">{{ item.product.price|floatformat:2 }} ₺</span>
+                            <span class="price-tag" style="color: var(--angeles-lila);">{{ item.get_unit_price|floatformat:2 }} ₺</span>
+                            <div class="campaign-badge">🎉 %{{ info.applied.discount_percent }} İndirim!</div>
+                        {% else %}
+                            <span class="price-tag">{{ item.product.price|floatformat:2 }} ₺</span>
+                        {% endif %}
+
+                        {% if info.next %}
+                        <div class="next-deal-info">
+                            <i class="fas fa-magic"></i> <strong>{{ info.remaining_for_next }} adet</strong> daha ekle, <strong>%{{ info.next.discount_percent }}</strong> indirim yakala!
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endwith %}
+
+                    <div class="quantity-control">
+                        <button type="button" class="qty-btn" onclick="stepQty('{{ item.id }}', -1)"><i class="fas fa-minus"></i></button>
+                        <input type="number" id="qty-{{ item.id }}" value="{{ item.quantity }}" min="1" class="qty-input" onchange="updateCartItem('{{ item.id }}', this.value)">
+                        <button type="button" class="qty-btn" onclick="stepQty('{{ item.id }}', 1)"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="item-total-side" style="display: flex; flex-direction: column; justify-content: flex-end; text-align: right;">
+                    <small style="color: #bbb; display: block; margin-bottom: 5px;">Toplam (KDV Dahil)</small>
+                    
+                    {% with info=item.get_discount_info %}
+                        {% if info.applied %}
+                            <span style="text-decoration: line-through; color: #bbb; font-size: 0.85rem; display: block;">
+                                {{ item.get_raw_total_price|floatformat:2 }} ₺
+                            </span>
+                            <strong style="font-size: 1.4rem; color: var(--angeles-yesil);">
+                                <i class="fas fa-check-circle" style="font-size: 1rem;"></i> {{ item.total_price|floatformat:2 }} ₺
+                            </strong>
+                        {% else %}
+                            <strong style="font-size: 1.4rem; color: var(--angeles-text);">{{ item.total_price|floatformat:2 }} ₺</strong>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <aside class="order-summary-card">
+            <h2 style="color: var(--angeles-lila); margin-bottom: 25px;">Sipariş Özeti</h2>
+
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <span>Ürün Toplamı</span>
+                <span>{{ cart.subtotal|floatformat:2 }} ₺</span>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom: 15px;">
+                <span>Kargo</span>
+                {% if cart.shipping_fee == 0 %}
+                <span style="color:#27ae60; font-weight: 600;">Ücretsiz</span>
+                {% else %}
+                <span>{{ cart.shipping_fee|floatformat:2 }} ₺</span>
+                {% endif %}
+            </div>
+
+            {% if cart.shipping_fee > 0 %}
+            <p style="margin-top:10px; font-size:0.85rem; color:#999; background: #fdf8ef; padding: 12px; border-radius: 12px; border: 1px dashed #f39c1233;">
+                🚚 <strong>{{ cart.free_shipping_limit|floatformat:2 }} ₺</strong> ve üzeri alışverişinizde kargo ücretsiz!
+            </p>
+            {% else %}
+            <p style="margin-top:10px; font-size:0.85rem; color: var(--angeles-yesil); background: rgba(39, 174, 96, 0.05); padding: 12px; border-radius: 12px; text-align: center;">
+                🎉 Kargonuz bizden!
+            </p>
+            {% endif %}
+
+            <div class="summary-total">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 1rem; color: var(--angeles-text); font-weight: 500;">Genel Toplam</span>
+                    <span>{{ cart.total_price|floatformat:2 }} ₺</span>
+                </div>
+            </div>
+
+            <a href="{% url 'cart-checkout' %}" class="btn-checkout">SİPARİŞİ TAMAMLA</a>
+            <p style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: #bbb;">
+                <i class="fas fa-leaf" style="color: var(--angeles-yesil);"></i> Doğal Yaşam, Mutlu Seçimler
+            </p>
+        </aside>
+
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 100px 20px;">
+        <div style="background: white; display: inline-block; padding: 40px; border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px;">
+            <i class="fas fa-shopping-basket" style="font-size: 4rem; color: var(--angeles-yesil);"></i>
+        </div>
+        <h2 style="color: var(--angeles-lila);">Sepetiniz Boş</h2>
+        <a href="/" class="btn-checkout" style="display: inline-block; width: auto; padding: 15px 50px;">Alışverişe Başla</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="custom-modal-overlay" id="deleteModal">
+    <div class="custom-modal">
+        <div class="modal-icon"><i class="fas fa-trash-alt"></i></div>
+        <h3 style="color: var(--angeles-text); margin-bottom: 10px;">Ürünü Kaldır?</h3>
+        <p style="color: #777; font-size: 0.95rem;">Bu ürünü sepetinizden çıkartmak istediğinize emin misiniz?</p>
+        <div class="modal-buttons">
+            <button class="btn-modal btn-cancel" onclick="hideDeleteModal()">Vazgeç</button>
+            <button class="btn-modal btn-confirm-delete" id="confirmDeleteBtn">Evet, Kaldır</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let itemToDelete = null;
+
+    function showDeleteModal(itemId) {
+        itemToDelete = itemId;
+        document.getElementById('deleteModal').classList.add('active');
+    }
+
+    function hideDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('active');
+        itemToDelete = null;
+    }
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        if (itemToDelete) window.location.href = `/sepet/kaldir/${itemToDelete}/`;
+    });
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('deleteModal');
+        if (event.target == modal) hideDeleteModal();
+    }
+
+    function stepQty(itemId, step) {
+        const input = document.getElementById(`qty-${itemId}`);
+        let currentVal = parseInt(input.value);
+        if (!isNaN(currentVal)) {
+            let newVal = currentVal + step;
+            if (newVal >= 1) {
+                input.value = newVal;
+                updateCartItem(itemId, newVal);
+            }
+        }
+    }
+
+    function updateCartItem(itemId, newQty) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{% url 'update_cart' %}";
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = '{{ csrf_token }}';
+        const qtyInput = document.createElement('input');
+        qtyInput.type = 'hidden';
+        qtyInput.name = `quantity_${itemId}`;
+        qtyInput.value = newQty;
+        form.appendChild(csrfInput);
+        form.appendChild(qtyInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+{% endblock %}

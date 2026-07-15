@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ana Sayfa | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}">
+
+<style>
+    /* Main Container Fix */
+    .home-wrapper {
+        max-width: 1400px;
+        margin: 20px auto;
+        padding: 0 20px;
+        display: flex;
+        gap: 25px;
+        align-items: flex-start;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Left Category Menu */
+    .sidebar-container {
+        flex: 0 0 260px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        z-index: 10;
+    }
+
+    .sidebar-head {
+        background: var(--angeles-lila);
+        color: white;
+        padding: 15px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .sidebar-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-list li a {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 15px;
+        color: #555;
+        text-decoration: none;
+        border-bottom: 1px solid #f9f9f9;
+        transition: 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .sidebar-list li a:hover {
+        background: #fcfaff;
+        color: var(--angeles-lila);
+    }
+
+    /* Right Side: Slider and Content */
+    .content-container {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .slider-wrapper {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: #fff;
+    }
+
+    .hero-slideshow .slide img {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 16 / 7;
+        object-fit: cover;
+        display: block;
+    }
+
+    .slider-nav {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: space-between;
+        padding: 0 15px;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .nav-btn {
+        pointer-events: auto;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        color: var(--angeles-lila);
+        cursor: pointer;
+        font-size: 24px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-nav {
+        margin: 35px 0;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 10px 28px;
+        border-radius: 30px;
+        background: white;
+        color: #666;
+        text-decoration: none;
+        border: 1px solid #eee;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+    .filter-btn.active {
+        background: var(--angeles-lila);
+        color: white;
+        border-color: var(--angeles-lila);
+        box-shadow: 0 5px 15px rgba(142, 104, 171, 0.3);
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+        color: var(--angeles-text);
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title::before {
+        content: "";
+        width: 6px;
+        height: 30px;
+        background: var(--angeles-turkuaz);
+        border-radius: 10px;
+    }
+
+    /* Empty State (Empty State) Design */
+    .empty-state {
+        grid-column: 1 / -1; /* Grid all columns */
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 20px;
+        border: 2px dashed #eee;
+        margin: 20px 0;
+    }
+
+    .empty-state i {
+        font-size: 3.5rem;
+        color: #e0e0e0;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+        color: #777;
+        margin-bottom: 25px;
+    }
+
+    .btn-angeles-outline {
+        display: inline-block;
+        padding: 10px 30px;
+        border: 2px solid var(--angeles-turkuaz);
+        color: var(--angeles-turkuaz);
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-angeles-outline:hover {
+        background: var(--angeles-turkuaz);
+        color: white;
+    }
+
+    .load-more-container {
+        text-align: center;
+        margin: 40px 0;
+    }
+
+    .load-more-btn {
+        background: white;
+        color: var(--angeles-lila);
+        border: 2px solid var(--angeles-lila);
+        padding: 12px 35px;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .load-more-btn:hover {
+        background: var(--angeles-lila);
+        color: white;
+    }
+
+    .products-grid {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+        gap: 20px !important;
+    }
+
+    /* Responsive Settings */
+    @media (max-width: 992px) {
+        .home-wrapper { flex-direction: column; }
+        .sidebar-container { width: 100%; flex: none; margin-bottom: 20px; }
+        .sidebar-list { display: grid; grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+        .sidebar-list { grid-template-columns: 1fr; }
+        .products-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    }
+</style>
+
+<div class="home-wrapper">
+    <aside class="sidebar-container">
+        <div class="sidebar-head">
+            <i class="fas fa-bars"></i> Kategoriler
+        </div>
+        <ul class="sidebar-list">
+            <li><a href="{% url 'elektronik-cihazlar' %}"><span>Elektronik Cihazlar</span><i class="fas fa-laptop"></i></a></li>
+            <li><a href="{% url 'ev-ve-yasam' %}"><span>Ev ve Yaşam</span><i class="fas fa-home"></i></a></li>
+            <li><a href="{% url 'hasta-bakim-malzemeleri' %}"><span>Hasta Bakım Malzemeleri</span><i class="fas fa-heartbeat"></i></a></li>
+            <li><a href="{% url 'kisisel-yasam-malzemeleri' %}"><span>Kişisel Yaşam Malzemeleri</span><i class="fas fa-user-alt"></i></a></li>
+            <li><a href="{% url 'vitamin-ve-takviyeler' %}"><span>Vitamin ve Takviyeler</span><i class="fas fa-pills"></i></a></li>
+            <li><a href="{% url 'medikal-malzemeler' %}"><span>Medikal Malzemeler</span><i class="fas fa-medkit"></i></a></li>
+            <li><a href="{% url 'medikal-sarf-malzemeleri' %}"><span>Medikal Sarf Malzemeleri</span><i class="fas fa-medkit"></i></a></li>
+            <li><a href="{% url 'cok-satanlar' %}"><span>Çok Satanlar</span><i class="fas fa-star"></i></a></li>
+            <li><a href="{% url 'yeni-urunler' %}"><span>Yeni Ürünler</span><i class="fas fa-newspaper"></i></a></li>
+            <li><a href="{% url 'kampanyalar' %}"><span>Kampanyalar</span><i class="fas fa-gift"></i></a></li>
+        </ul>
+    </aside>
+
+    <div class="content-container">
+        <div class="slider-wrapper">
+            <div class="hero-slideshow">
+                {% for slide in slides %}
+                <div class="slide">
+                    <img src="{{ slide.image.url }}" alt="{{ slide.title }}">
+                </div>
+                {% endfor %}
+            </div>
+            <div class="slider-nav">
+                <button id="prevBtn" class="nav-btn">‹</button>
+                <button id="nextBtn" class="nav-btn">›</button>
+            </div>
+        </div>
+
+        <nav class="filter-nav">
+            <a href="?filter=yeni" class="filter-btn {% if current_filter == 'yeni' %}active{% endif %}">Yeni Ürünler</a>
+            <a href="?filter=cok-satan" class="filter-btn {% if current_filter == 'cok-satan' %}active{% endif %}">Çok Satanlar</a>
+            <a href="?filter=kampanya" class="filter-btn {% if current_filter == 'kampanya' %}active{% endif %}">Kampanyalar</a>
+        </nav>
+
+        <section class="products-section">
+            <h2 class="section-title">Sizin İçin Seçtiklerimiz</h2>
+            <div id="product-grid" class="products-grid">
+                {% for product in page_obj %}
+                    {% include 'components/product-card.html' with product=product %}
+                {% empty %}
+                    <div class="empty-state">
+                        <i class="fas fa-gift"></i>
+                        <p>Şu an aktif bir kampanya bulunmuyor ancak size özel fırsatlar yolda!</p>
+                        <a href="/" class="btn-angeles-outline">Fırsatları Bekleme, Ürünleri Keşfet</a>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if page_obj.has_next %}
+            <div class="load-more-container">
+                <button id="load-more-btn" data-page="2" class="load-more-btn">
+                    Daha Fazla Ürün Göster
+                </button>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+
+{% include 'components/price-popup.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tiny-slider.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Slider Settings
+        if (document.querySelector('.hero-slideshow')) {
+            var slider = tns({
+                container: '.hero-slideshow',
+                items: 1,
+                slideBy: 'page',
+                autoplay: true,
+                autoplayButtonOutput: false,
+                controls: false,
+                nav: false,
+                mouseDrag: true,
+                speed: 600
+            });
+            document.getElementById('prevBtn').onclick = () => slider.goTo('prev');
+            document.getElementById('nextBtn').onclick = () => slider.goTo('next');
+        }
+
+        // Infinite Scroll (More View) Logic
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        const productGrid = document.getElementById('product-grid');
+
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', function () {
+                const page = this.getAttribute('data-page');
+                const filter = "{{ current_filter }}";
+                const url = `?filter=${filter}&page=${page}`;
+
+                loadMoreBtn.innerText = "Yükleniyor...";
+                loadMoreBtn.disabled = true;
+
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    if (html.trim().length > 5) {
+                        productGrid.insertAdjacentHTML('beforeend', html);
+                        this.setAttribute('data-page', parseInt(page) + 1);
+                        loadMoreBtn.innerText = "Daha Fazla Ürün Göster";
+                        loadMoreBtn.disabled = false;
+                    } else {
+                        loadMoreBtn.parentElement.innerHTML = '<p style="color:#999; font-weight:600; margin-top:20px;">Tüm ürünler gösterildi.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    loadMoreBtn.innerText = "Hata Oluştu, Tekrar Dene";
+                    loadMoreBtn.disabled = false;
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

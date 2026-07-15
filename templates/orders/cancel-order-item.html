@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ürün İptal | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<main style="padding: 40px 0; background: #fcfaff; min-height: 80vh;">
+    <div class="container" style="max-width: 600px; margin: 0 auto; padding: 0 20px;">
+        <nav class="breadcrumb-nav" style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #636e72; margin-bottom: 25px;">
+            <a href="{% url 'home' %}" style="color: #8e68ab; text-decoration: none;">Ana Sayfa</a>
+            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+            <a href="{% url 'order-tracking' %}" style="color: #8e68ab; text-decoration: none;">Siparişlerim</a>
+            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+            <span>Ürün İptal</span>
+        </nav>
+
+        <div class="card" style="background: white; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 30px;">
+            <h1 style="font-size: 1.8rem; color: #2d3436; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-times-circle" style="color: #d63031;"></i>
+                Ürün İptali
+            </h1>
+            <p style="color: #636e72; margin-bottom: 25px;">Sipariş #{{ order.id }} - Kısmi İptal</p>
+
+            <div class="product-info" style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    {% if order_item.product.get_main_image %}
+                        <img src="{{ order_item.product.get_main_image }}" alt="{{ order_item.product.name }}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 8px; background: white; padding: 5px;">
+                    {% endif %}
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 5px 0; color: #2d3436;">{{ order_item.product.name }}</h3>
+                        <p style="margin: 0; color: #636e72; font-size: 0.9rem;">{{ order_item.price }} ₺</p>
+                    </div>
+                </div>
+                <div style="border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #636e72;">Toplam Miktar:</span>
+                        <strong>{{ order_item.quantity }} Adet</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #636e72;">İptal Edilen:</span>
+                        <strong style="color: #d63031;">{{ order_item.cancelled_quantity }} Adet</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #636e72;">İptal Edilebilir:</span>
+                        <strong style="color: #00b894;">{{ order_item.active_quantity }} Adet</strong>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" style="margin-top: 25px;">
+                {% csrf_token %}
+                <div style="margin-bottom: 20px;">
+                    <label for="cancel_quantity" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436;">
+                        İptal Edilecek Miktar <span style="color: #d63031;">*</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        id="cancel_quantity" 
+                        name="cancel_quantity" 
+                        min="1" 
+                        max="{{ order_item.active_quantity }}"
+                        value="1"
+                        required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;"
+                    >
+                    <small style="color: #636e72; display: block; margin-top: 5px;">
+                        Maksimum {{ order_item.active_quantity }} adet iptal edilebilir.
+                    </small>
+                </div>
+
+                <div class="warning-box" style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 15px; margin-bottom: 25px;">
+                    <p style="margin: 0; color: #856404; font-size: 0.9rem;">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                        <strong>Uyarı:</strong> Bu işlem geri alınamaz. Seçtiğiniz miktar iptal edilecektir.
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="submit" class="btn-cancel" style="flex: 1; padding: 12px 24px; background: #d63031; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                        <i class="fas fa-times-circle"></i> İptal Et
+                    </button>
+                    <a href="{% url 'order-tracking' %}" class="btn-cancel-link" style="flex: 1; padding: 12px 24px; background: #f8f9fa; color: #636e72; text-decoration: none; border-radius: 8px; font-weight: 600; text-align: center; transition: 0.3s; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<style>
+.btn-cancel:hover { background: #c0392b !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(214, 48, 49, 0.2); }
+.btn-cancel-link:hover { background: #e9ecef !important; }
+</style>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}İade Taleplerim | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<main style="padding: 40px 0; background: #fcfaff; min-height: 80vh;">
+    <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 0 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+            <h1 style="font-size: 2rem; color: #2d3436; margin: 0;">
+                <i class="fas fa-undo" style="color: #00b894;"></i> İade Taleplerim
+            </h1>
+            {% if delivered_orders %}
+            <button type="button" id="showReturnFormBtn" style="padding: 12px 24px; background: #00b894; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-plus-circle"></i> İade Talebi Oluştur
+            </button>
+            {% endif %}
+        </div>
+
+        {% if delivered_orders %}
+        <div id="returnFormCard" style="display: none; background: white; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 30px; margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; color: #2d3436; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-shopping-bag" style="color: #00b894;"></i>
+                İade Talebi Oluştur
+            </h2>
+            <form method="POST" action="{% url 'select-order-for-return' %}">
+                {% csrf_token %}
+                <div style="margin-bottom: 20px;">
+                    <label for="order_id" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436;">
+                        Sipariş Seçin <span style="color: #d63031;">*</span>
+                    </label>
+                    <select 
+                        id="order_id" 
+                        name="order_id" 
+                        required
+                        style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1rem; background: white; cursor: pointer;"
+                    >
+                        <option value="">Bir sipariş seçiniz...</option>
+                        {% for order in delivered_orders %}
+                        <option value="{{ order.id }}">
+                            Sipariş #{{ order.id }} - {{ order.created_at|date:"d F Y" }} - {{ order.total_price|floatformat:2 }} ₺
+                            ({{ order.items.count }} ürün)
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <small style="color: #636e72; display: block; margin-top: 5px;">
+                        <i class="fas fa-info-circle"></i> Sadece "Teslim Edildi" statüsündeki siparişler için iade talebi oluşturulabilir.
+                    </small>
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <button type="submit" style="flex: 1; padding: 12px 24px; background: #00b894; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                        <i class="fas fa-arrow-right"></i> Devam Et
+                    </button>
+                    <button type="button" id="cancelReturnFormBtn" style="flex: 1; padding: 12px 24px; background: #f8f9fa; color: #636e72; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                        <i class="fas fa-times"></i> İptal
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        {% if return_requests %}
+            <div class="return-requests-list">
+                {% for request in return_requests %}
+                    <div class="return-card" style="background: white; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 25px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 15px;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                    {% if request.order_item.product.get_main_image %}
+                                        <img src="{{ request.order_item.product.get_main_image }}" alt="{{ request.order_item.product.name }}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 8px;">
+                                    {% endif %}
+                                    <div>
+                                        <h3 style="margin: 0 0 5px 0; color: #2d3436;">{{ request.order_item.product.name }}</h3>
+                                        <p style="margin: 0; color: #636e72; font-size: 0.9rem;">
+                                            Sipariş #{{ request.order.id }} | {{ request.quantity }} Adet
+                                        </p>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 15px;">
+                                    <p style="margin: 0 0 5px 0; color: #636e72; font-size: 0.9rem;">
+                                        <strong>Sebep:</strong> {{ request.get_reason_display }}
+                                    </p>
+                                    {% if request.reason_detail %}
+                                        <p style="margin: 5px 0; color: #636e72; font-size: 0.9rem;">
+                                            {{ request.reason_detail }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="status-badge status-{{ request.status }}" style="padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 10px;">
+                                    {{ request.get_status_display }}
+                                </span>
+                                <p style="margin: 5px 0; color: #636e72; font-size: 0.85rem;">
+                                    {{ request.created_at|date:"d F Y, H:i" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state" style="text-align: center; padding: 60px 20px; background: white; border-radius: 16px;">
+                <i class="fas fa-inbox" style="font-size: 4rem; color: #ddd; margin-bottom: 20px;"></i>
+                <h2 style="color: #2d3436; margin-bottom: 10px;">İade talebiniz bulunmuyor</h2>
+                <p style="color: #636e72;">Henüz bir iade talebi oluşturmadınız.</p>
+            </div>
+        {% endif %}
+    </div>
+</main>
+
+<style>
+.status-pending { background: #fff8e1; color: #f57f17; }
+.status-approved { background: #e8f5e9; color: #2e7d32; }
+.status-received { background: #e3f2fd; color: #1976d2; }
+.status-rejected { background: #ffebee; color: #c62828; }
+.status-completed { background: #d4edda; color: #155724; }
+#showReturnFormBtn:hover { background: #00a085 !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 184, 148, 0.2); }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const showBtn = document.getElementById('showReturnFormBtn');
+    const cancelBtn = document.getElementById('cancelReturnFormBtn');
+    const formCard = document.getElementById('returnFormCard');
+    
+    if (showBtn && formCard) {
+        showBtn.addEventListener('click', function() {
+            formCard.style.display = 'block';
+            showBtn.style.display = 'none';
+            formCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+    }
+    
+    if (cancelBtn && formCard) {
+        cancelBtn.addEventListener('click', function() {
+            formCard.style.display = 'none';
+            if (showBtn) showBtn.style.display = 'flex';
+        });
+    }
+});
+</script>
+{% endblock %}

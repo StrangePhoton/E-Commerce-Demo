@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Siparişi Onayla | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<style>
+    .checkout-page-wrapper {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 0 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .checkout-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 15px 40px rgba(142, 104, 171, 0.1);
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+    }
+
+    .checkout-header {
+        background: linear-gradient(135deg, var(--angeles-lila), #7a5a92);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .checkout-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .checkout-body {
+        padding: 40px;
+    }
+
+    /* Product List */
+    .order-items-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 30px 0;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .order-item:last-child { border-bottom: 2px solid var(--angeles-lila); }
+
+    .item-info { display: flex; align-items: center; gap: 15px; }
+    
+    .item-name {
+        font-weight: 500;
+        color: var(--angeles-text);
+        font-size: 1rem;
+    }
+
+    .item-quantity {
+        background: #f0f0f0;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .item-price {
+        font-weight: 600;
+        color: var(--angeles-text);
+    }
+
+    /* Total Field */
+    .summary-box {
+        background: #fcfaff;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .total-label {
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    .total-amount {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--angeles-lila);
+    }
+
+    /* Confirm Button */
+    .btn-checkout-confirm {
+        width: 100%;
+        background: var(--angeles-turkuaz);
+        color: white;
+        border: none;
+        padding: 18px;
+        border-radius: 15px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        box-shadow: 0 10px 20px rgba(105, 179, 162, 0.2);
+    }
+
+    .btn-checkout-confirm:hover {
+        background: var(--angeles-yesil);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px rgba(105, 179, 162, 0.3);
+    }
+
+    .security-note {
+        text-align: center;
+        margin-top: 20px;
+        color: #999;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+        .checkout-body { padding: 20px; }
+        .total-amount { font-size: 1.3rem; }
+    }
+</style>
+
+<div class="checkout-page-wrapper">
+    <div class="checkout-card">
+        <div class="checkout-header">
+            <h1><i class="fas fa-shopping-check"></i> Siparişi Onayla</h1>
+        </div>
+
+        <div class="checkout-body">
+            <ul class="order-items-list">
+                {% for item in cart.items.all %}
+                <li class="order-item">
+                    <div class="item-info">
+                        <span class="item-name">{{ item.product.name }}</span>
+                        <span class="item-quantity">x{{ item.quantity }}</span>
+                    </div>
+                    <span class="item-price">{{ item.product.price|floatformat:2 }} ₺</span>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="summary-box">
+                <span class="total-label">Ödenecek Toplam Tutar</span>
+                <span class="total-amount">{{ cart.total_price|floatformat:2 }} ₺</span>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-checkout-confirm">
+                    Siparişi Tamamla <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="security-note">
+                <i class="fas fa-lock"></i> 256-bit SSL Güvenli Ödeme Altyapısı
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'view_cart' %}" style="color: #888; text-decoration: none; font-size: 0.9rem;">
+            <i class="fas fa-chevron-left"></i> Sepete Geri Dön
+        </a>
+    </div>
+</div>
+{% endblock %}

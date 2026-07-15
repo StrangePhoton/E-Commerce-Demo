@@ -1,0 +1,44 @@
+<style>
+    /* To prevent sections from being below the header */
+    .profile-section { scroll-margin-top: 100px; }
+    html { scroll-behavior: smooth; }
+
+    /* The sticky part that makes the sidebar sticky */
+    .profile-sidebar {
+        position: -webkit-sticky; /* For Safari support */
+        position: sticky;
+        top: 100px; /* The space to leave above the header, based on the header height */
+        height: fit-content; /* The content should take as much space as it needs */
+        align-self: flex-start; /* Prevent the container from stretching */
+    }
+</style>
+
+<aside class="profile-sidebar">
+    <div class="profile-info">
+        <div class="user-avatar-circle">
+            <i class="fas fa-user"></i>
+        </div>
+        <h3>{{ user.get_full_name|default:user.username }}</h3>
+        <p>{{ user.email }}</p>
+    </div>
+    <nav class="profile-nav">
+        <a href="#profilbilgileri" class="scroll-link active">
+            <i class="fas fa-user-circle"></i> Profil Bilgileri
+        </a>
+        <a href="#siparislerim" class="scroll-link">
+            <i class="fas fa-box"></i> Siparişlerim
+        </a>
+        <a href="#adreslerim" class="scroll-link">
+            <i class="fas fa-map-marker-alt"></i> Adreslerim
+        </a>
+        <a href="#favorilerim" class="scroll-link">
+            <i class="fas fa-heart"></i> Favorilerim
+        </a>
+        <a href="#iadelerim" class="scroll-link">
+            <i class="fas fa-undo"></i> İadelerim
+        </a>
+        <a href="{% url 'password_reset' %}" class="scroll-link">
+            <i class="fas fa-lock"></i> Güvenlik (Şifre Sıfırlama)
+        </a>
+    </nav>
+</aside>

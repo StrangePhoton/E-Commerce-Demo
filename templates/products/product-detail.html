@@ -1,0 +1,591 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/product-detail.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<style>
+
+    :root{
+        --swiper-navigation-color: var(--angeles-lila);
+        --swiper-pagination-color: var(--angeles-lila);
+    }
+    /* General Container */
+    .product-detail-page {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .product-detail-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        background: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    /* Gallery Area */
+    .product-gallery {
+        background: #f9f9f9;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+        width: 100%;
+        height: 400px;
+        position: relative;
+    }
+
+    .main-image {
+        max-width: 100%;
+        height: auto;
+        transition: transform 0.5s ease;
+    }
+    .main-image:hover { transform: scale(1.05); }
+
+    /* Summary Area */
+    .product-summary { display: flex; flex-direction: column; gap: 20px; }
+
+    .product-title {
+        font-size: 2.2rem;
+        color: var(--angeles-text);
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .product-price {
+        font-size: 2rem;
+        color: var(--angeles-lila);
+        font-weight: 700;
+    }
+
+    /* View Price Button (For Non-Logged In Users) */
+    .btn-price-info {
+        background: linear-gradient(135deg, var(--angeles-turkuaz), #48c6ef);
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 1.1rem;
+        width: fit-content;
+        transition: 0.3s;
+    }
+    .btn-price-info:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+    /* Rating Section (Logged In Users) */
+    .product-rating-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: #fcf9ff;
+        padding: 12px 20px;
+        border-radius: 50px;
+        width: fit-content;
+    }
+    .star-filled { color: #ffc107; }
+    .star-empty { color: #ddd; }
+    .rating-value { font-weight: 700; color: var(--angeles-text); }
+    .rating-count { color: #888; font-size: 0.9rem; }
+
+    /* Description and Campaign */
+    .product-description h4, .product-discounts h4 {
+        color: var(--angeles-text);
+        border-left: 4px solid var(--angeles-turkuaz);
+        padding-left: 10px;
+        margin-bottom: 10px;
+    }
+    .product-description p { color: #666; line-height: 1.6; }
+
+    .discount-badge {
+        display: inline-block;
+        background: #e8fffb;
+        color: #00bfa5;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    /* Action Buttons */
+    .product-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: 0.3s;
+        cursor: pointer;
+        text-decoration: none;
+        border: none;
+    }
+
+    .add-cart {
+        background: var(--angeles-lila);
+        color: white;
+    }
+    .add-cart:hover { opacity: 0.9; transform: translateY(-2px); }
+
+    .favorite.add {
+        background: #fff;
+        border: 2px solid #eee;
+        color: #ff4757;
+    }
+    .favorite.add:hover { border-color: #ff4757; background: #fff5f6; }
+
+    .favorite.remove {
+        background: #ff4757;
+        color: white;
+    }
+
+    /* Reviews List (Logged In Users) */
+    .reviews-section {
+        margin-top: 60px;
+        border-top: 2px solid #f0f0f0;
+        padding-top: 40px;
+    }
+    .review-item {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #f0f0f0;
+        margin-bottom: 20px;
+    }
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .review-user { font-weight: 600; color: var(--angeles-text); }
+    .review-stars { color: #ffc107; font-size: 0.8rem; }
+
+    .swiper{
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+    }
+
+    .swiper-slide{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+    }
+
+    .swiper-slide img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    
+    }
+
+    /* Make columns single on mobile */
+    @media (max-width: 768px) {
+        .product-detail-wrapper { grid-template-columns: 1fr; }
+        .product-title { font-size: 1.6rem; }
+    }
+</style>
+
+<div class="product-detail-page">
+    <div class="product-detail-wrapper">
+        <div class="product-gallery">
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    {% for img_obj in product.images.all %}
+                        <div class="swiper-slide">
+                            <img src="{{ img_obj.image.url }}" class="main-image">
+                        </div>
+                    {% empty %}
+                        <div class="swiper-slide">
+                            <img src="{% static STORE_LOGO %}" class="main-image">
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+
+        <div class="product-summary">
+            <h1 class="product-title">{{ product.name }}</h1>
+
+            <div class="product-rating-section">
+                <div class="stars-display">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= average_rating %}
+                            <i class="fas fa-star star-filled"></i>
+                        {% else %}
+                            <i class="far fa-star star-empty"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <span class="rating-value">{{ average_rating|floatformat:1 }}</span>
+                <span class="rating-count">({{ rating_count }} Değerlendirme)</span>
+            </div>
+
+            {% if user.is_authenticated %}
+                <p class="product-price">{{ product.price|floatformat:2 }} ₺</p>
+            {% else %}
+                <button class="btn-price-info" onclick="showPricePopup()">
+                    <i class="fas fa-lock"></i> Fiyatı Görmek İçin Tıklayın
+                </button>
+            {% endif %}
+
+            {% if product.description %}
+                <div class="product-description">
+                    <h4>Ürün Bilgisi</h4>
+                    <p>{{ product.description }}</p>
+                </div>
+            {% endif %}
+
+            {% if product.bulk_discounts.exists %}
+                <div class="product-discounts">
+                    <h4>Toplu Alım Fırsatları</h4>
+                    {% for discount in product.bulk_discounts.all %}
+                        <div class="discount-badge">
+                            <i class="fas fa-percentage"></i> {{ discount.quantity_threshold }}+ adet alımda %{{ discount.discount_percent }} İndirim
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <!-- Size and Color Selection -->
+                {% if product.has_sizes or product.has_colors %}
+                    <div class="variant-selection" style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+                        {% if product.has_sizes %}
+                            <div style="margin-bottom: 15px;">
+                                <label for="product-size" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436;">
+                                    Beden <span style="color: #d63031;">*</span>
+                                </label>
+                                <select id="product-size" name="size" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                                    <option value="">Seçiniz...</option>
+                                    {% for size in available_sizes %}
+                                        <option value="{{ size }}">{{ size }}</option>
+                                    {% empty %}
+                                        <option value="" disabled>Henüz beden eklenmemiş</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        {% endif %}
+
+                        {% if product.has_colors %}
+                            <div style="margin-bottom: 15px;">
+                                <label for="product-color" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436;">
+                                    Renk <span style="color: #d63031;">*</span>
+                                </label>
+                                <select id="product-color" name="color" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                                    <option value="">Seçiniz...</option>
+                                    {% for color in available_colors %}
+                                        <option value="{{ color }}">{{ color }}</option>
+                                    {% empty %}
+                                        <option value="" disabled>Henüz renk eklenmemiş</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        {% endif %}
+
+                        <div id="stock-info" style="margin-top: 10px; padding: 10px; background: #e8f5e9; border-radius: 8px; display: none;">
+                            <span style="color: #2e7d32; font-weight: 600;">
+                                <i class="fas fa-check-circle"></i> Stokta: <span id="stock-count">0</span> adet
+                            </span>
+                        </div>
+                        <div id="stock-warning" style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 8px; display: none;">
+                            <span style="color: #856404;">
+                                <i class="fas fa-exclamation-triangle"></i> <span id="stock-warning-text"></span>
+                            </span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Stock Information (If no variant) -->
+                {% if not product.has_sizes and not product.has_colors %}
+                    <div style="margin-top: 15px; padding: 10px; background: {% if product.display_stock > 0 %}#e8f5e9{% else %}#ffebee{% endif %}; border-radius: 8px;">
+                        <span style="color: {% if product.display_stock > 0 %}#2e7d32{% else %}#c62828{% endif %}; font-weight: 600;">
+                            <i class="fas fa-{% if product.display_stock > 0 %}check-circle{% else %}times-circle{% endif %}"></i>
+                            {% if product.display_stock > 0 %}
+                                Stokta: {{ product.display_stock }} adet
+                            {% else %}
+                                Stokta Yok
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <div class="product-actions">
+                {% if user.is_authenticated %}
+                <form action="{% url 'add_to_cart' product.id %}" method="post" id="add-to-cart-form" style="flex: 2;">
+                    {% csrf_token %}
+                    {% if product.has_sizes %}
+                        <input type="hidden" name="size" id="form-size" value="">
+                    {% endif %}
+                    {% if product.has_colors %}
+                        <input type="hidden" name="color" id="form-color" value="">
+                    {% endif %}
+                    <button type="submit" class="action-btn add-cart" id="add-to-cart-btn">
+                        <i class="fas fa-shopping-cart"></i> SEPETE EKLE
+                    </button>
+                </form>
+                {% endif %}
+            
+                {% if user.is_authenticated %}
+                    {% if product.id in favorites %}
+                        <a href="{% url 'remove_from_favorites' product.id %}" class="action-btn favorite remove" title="Favorilerden Kaldır">
+                            <i class="fas fa-heart"></i>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'add_to_favorites' product.id %}" class="action-btn favorite add" title="Favorilere Ekle">
+                            <i class="far fa-heart"></i>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_authenticated and not can_rate %}
+    <div style="margin-top: 30px; padding: 20px; background: #fff8e1; border-radius: 12px; border: 1px solid #ffe082; display: flex; align-items: center; gap: 15px;">
+        <i class="fas fa-info-circle" style="color: #ffa000; font-size: 1.5rem;"></i>
+        <p style="margin:0; color: #7f5e00; font-size: 0.95rem;">
+            Bu ürünü değerlendirmek için satın almış olmanız gerekmektedir. Siparişiniz teslim edildikten sonra yorum yapabilirsiniz.
+        </p>
+    </div>
+    {% endif %}
+
+    {% if user.is_authenticated and can_rate %}
+    <div class="rating-form-container" style="margin-top: 40px; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;">
+        <h3 style="margin-bottom: 20px; font-weight: 700;">Ürünü Değerlendir</h3>
+        <form action="{% url 'add_rating' product.id %}" method="post" id="ratingForm">
+            {% csrf_token %}
+        
+            <div class="star-rating-input" style="display: flex; gap: 10px; font-size: 1.8rem; margin-bottom: 20px; color: #ddd;">
+                {% for i in "12345" %}
+                    <i class="fas fa-star rate-star" data-value="{{ forloop.counter }}" style="cursor: pointer; transition: 0.2s;"></i>
+                {% endfor %}
+            <input type="hidden" name="rating" id="selectedRating" value="0" required>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <textarea name="review" class="form-control" rows="3" placeholder="Deneyiminizi paylaşın (isteğe bağlı)..." style="width: 100%; border-radius: 12px; border: 1.5px solid #eee; padding: 15px; outline: none;"></textarea>
+            </div>
+
+            <button type="submit" class="action-btn add-cart" style="width: fit-content; padding: 12px 30px;">Gönder</button>
+                Gönder
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if ratings %}
+    <div class="reviews-section">
+        <h3 style="margin-bottom: 30px; font-weight: 700;">Müşteri Yorumları</h3>
+        <div class="reviews-list">
+            {% for rating in ratings %}
+            <div class="review-item">
+                <div class="review-header">
+                    <div>
+                        <span class="review-user">{{ rating.user.first_name|default:rating.user.username }}</span>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                <i class="{% if forloop.counter <= rating.rating %}fas{% else %}far{% endif %} fa-star"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <span class="review-date">{{ rating.created_at|date:"d F Y" }}</span>
+                </div>
+                {% if rating.review %}
+                <p class="review-text">{{ rating.review }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% include 'components/price-popup.html' %}
+
+<script>
+    var swiper = new Swiper(".mySwiper", {
+    loop: true,
+    spaceBetween: 10,
+    navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+    },
+});
+
+    // --- RATING SYSTEM ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.rate-star');
+        const ratingInput = document.getElementById('selectedRating');
+
+        stars.forEach(star => {
+            // When hovered over (Hover)
+            star.addEventListener('mouseover', function() {
+                const value = this.getAttribute('data-value');
+                highlightStars(value);
+            });
+
+            // When mouse is removed (Mouseout)
+            star.addEventListener('mouseout', function() {
+                highlightStars(ratingInput.value);
+            });
+
+            // When clicked (Click)
+            star.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                ratingInput.value = value;
+                highlightStars(value);
+                // Highlight the selected star (optional effect)
+                this.style.transform = "scale(1.2)";
+                setTimeout(() => this.style.transform = "scale(1)", 200);
+            });
+        });
+
+        function highlightStars(value) {
+            stars.forEach(star => {
+                if (star.getAttribute('data-value') <= value) {
+                    star.style.color = "#ffc107"; // Yellow
+                } else {
+                    star.style.color = "#ddd"; // Gray
+                }
+            });
+        }
+
+        // Form submission validation before submitting
+        const ratingForm = document.getElementById('ratingForm');
+        if (ratingForm) {
+            ratingForm.addEventListener('submit', function(e) {
+                if (ratingInput.value == "0") {
+                    e.preventDefault();
+                    alert("Lütfen bir puan seçiniz!");
+                }
+            });
+        }
+
+        // Size and Color Selection Operations
+        const sizeSelect = document.getElementById('product-size');
+        const colorSelect = document.getElementById('product-color');
+        const formSize = document.getElementById('form-size');
+        const formColor = document.getElementById('form-color');
+        const stockInfo = document.getElementById('stock-info');
+        const stockWarning = document.getElementById('stock-warning');
+        const stockCount = document.getElementById('stock-count');
+        const stockWarningText = document.getElementById('stock-warning-text');
+        const addToCartForm = document.getElementById('add-to-cart-form');
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        const productId = {{ product.id }};
+        const stockApiUrl = "{% url 'product-stock-api' product.id %}";
+
+        function updateStockInfo() {
+            const size = sizeSelect ? sizeSelect.value : '';
+            const color = colorSelect ? colorSelect.value : '';
+            
+            // Update the hidden inputs of the form
+            if (formSize) formSize.value = size;
+            if (formColor) formColor.value = color;
+
+            // If size or color is not selected, hide the stock information
+            if ((sizeSelect && !size) || (colorSelect && !color)) {
+                if (stockInfo) stockInfo.style.display = 'none';
+                if (stockWarning) stockWarning.style.display = 'none';
+                if (addToCartBtn) {
+                    addToCartBtn.disabled = true;
+                    addToCartBtn.style.opacity = '0.6';
+                    addToCartBtn.style.cursor = 'not-allowed';
+                }
+                return;
+            }
+
+            // Fetch the stock information with AJAX
+            const url = `${stockApiUrl}?size=${encodeURIComponent(size || '')}&color=${encodeURIComponent(color || '')}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (stockInfo) {
+                        stockInfo.style.display = 'block';
+                        if (stockCount) stockCount.textContent = data.stock;
+                    }
+                    if (stockWarning) {
+                        if (data.stock <= 0) {
+                            stockWarning.style.display = 'block';
+                            stockWarning.style.background = '#ffebee';
+                            if (stockWarningText) stockWarningText.textContent = 'Bu seçenek için stokta ürün bulunmamaktadır.';
+                            if (addToCartBtn) {
+                                addToCartBtn.disabled = true;
+                                addToCartBtn.style.opacity = '0.6';
+                                addToCartBtn.style.cursor = 'not-allowed';
+                            }
+                        } else if (data.stock < 5) {
+                            stockWarning.style.display = 'block';
+                            stockWarning.style.background = '#fff3cd';
+                            if (stockWarningText) stockWarningText.textContent = `Son ${data.stock} adet!`;
+                            if (addToCartBtn) {
+                                addToCartBtn.disabled = false;
+                                addToCartBtn.style.opacity = '1';
+                                addToCartBtn.style.cursor = 'pointer';
+                            }
+                        } else {
+                            stockWarning.style.display = 'none';
+                            if (addToCartBtn) {
+                                addToCartBtn.disabled = false;
+                                addToCartBtn.style.opacity = '1';
+                                addToCartBtn.style.cursor = 'pointer';
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Stok bilgisi alınamadı:', error);
+                });
+        }
+
+        if (sizeSelect) {
+            sizeSelect.addEventListener('change', updateStockInfo);
+        }
+        if (colorSelect) {
+            colorSelect.addEventListener('change', updateStockInfo);
+        }
+
+        // Form submission validation
+        if (addToCartForm) {
+            addToCartForm.addEventListener('submit', function(e) {
+                const size = sizeSelect ? sizeSelect.value : '';
+                const color = colorSelect ? colorSelect.value : '';
+                
+                if ((sizeSelect && !size) || (colorSelect && !color)) {
+                    e.preventDefault();
+                    alert('Lütfen tüm seçenekleri belirleyiniz.');
+                    return false;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

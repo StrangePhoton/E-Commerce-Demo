@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mesafeli Satış Sözleşmesi | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<main class="page-content">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Ana Sayfa</a> <i class="fas fa-chevron-right" style="font-size: 10px; margin: 0 8px; opacity: 0.5;"></i>
+            <span>Mesafeli Satış Sözleşmesi</span>
+        </div>
+
+        <div class="contract-header">
+            <h1 class="page-title">Mesafeli Satış Sözleşmesi</h1>
+            <div class="contract-badge">Taslak Metin</div>
+        </div>
+
+        <div class="content-wrapper shadow-sm">
+            <div class="info-banner">
+                <i class="fas fa-info-circle"></i>
+                <div class="info-text">
+                    <strong>Bilgilendirme:</strong> Bu metin genel bir bilgilendirme taslağıdır. Siparişinizi tamamladığınızda; satın aldığınız ürünler, kişisel bilgileriniz ve güncel fiyatlar ile size özel olarak düzenlenmiş hali tarafınıza e-posta ile gönderilecek ve kalıcı veri saklayıcısında depolanacaktır.
+                </div>
+            </div>
+
+            <article class="contract-body">
+                <section>
+                    <h2>1. TARAFLAR</h2>
+                    <div class="side-box">
+                        <p><strong>SATICI:</strong> {{ STORE_NAME }} (Bundan sonra "SATICI" olarak anılacaktır.)</p>
+                        <p><strong>ALICI:</strong> {{ STORE_NAME }} ({{ STORE_DOMAIN }}) internet sitesi üzerinden alışveriş yapan ve bilgileri sipariş formunda yer alan kullanıcı. (Bundan sonra "ALICI" olarak anılacaktır.)</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>2. KONU VE KAPSAM</h2>
+                    <p>İşbu sözleşmenin konusu, ALICI'nın SATICI'ya ait internet sitesi üzerinden elektronik ortamda siparişini verdiği, nitelikleri ve satış fiyatı belirtilen ürünlerin satışı ve teslimi ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri uyarınca tarafların hak ve yükümlülüklerinin belirlenmesidir.</p>
+                </section>
+
+                <section class="medical-warning">
+                    <h2>3. MEDİKAL ÜRÜN ÖZEL HÜKÜMLERİ</h2>
+                    <p>SİTE üzerinden satışı yapılan ürünlerin önemli bir kısmı tıbbi cihaz, steril sarf malzemesi veya kişisel sağlık ürünü niteliğindedir. Bu kapsamda:</p>
+                    <ul class="check-list">
+                        <li>Ürünlerin tıbbi amacına uygun kullanımı ALICI'nın sorumluluğundadır.</li>
+                        <li>Uzman tavsiyesi gerektiren cihazların kullanımı öncesinde mutlaka bir hekime danışılmalıdır.</li>
+                        <li>Ürün görselleri ve açıklamaları bilgilendirme amaçlıdır; kullanım öncesi prospektüs ve kılavuzlar dikkate alınmalıdır.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>4. CAYMA HAKKI VE HİJYEN İSTİSNALARI</h2>
+                    <p>ALICI, 14 gün içerisinde herhangi bir gerekçe göstermeksizin cayma hakkına sahiptir. Ancak Mesafeli Sözleşmeler Yönetmeliği m.15/ç uyarınca;</p>
+                    <div class="law-highlight">
+                        "Tesliminden sonra ambalaj, bant, mühür, paket gibi koruyucu unsurları açılmış olan mallardan; iadesi sağlık ve hijyen açısından uygun olmayanların teslimine ilişkin sözleşmelerde cayma hakkı kullanılamaz."
+                    </div>
+                    <p>Bu madde gereği; maske, enjektör, steril pansuman malzemeleri, CPAP maskeleri, nebulizatör setleri ve benzeri <strong>koruyucu paketi açılmış medikal ürünlerin iadesi kabul edilmemektedir.</strong></p>
+                </section>
+
+                <section>
+                    <h2>5. GENEL HÜKÜMLER</h2>
+                    <p>5.1. SATICI, sözleşme konusu ürünün sağlam, eksiksiz ve varsa garanti belgeleri ile teslim edilmesinden sorumludur.</p>
+                    <p>5.2. Kargo teslimatı sırasında fark edilen hasarlar için ALICI, mutlaka kargo görevlisine tutanak tutturmakla yükümlüdür.</p>
+                </section>
+
+                <section>
+                    <h2>6. YETKİLİ MAHKEME</h2>
+                    <p>İşbu sözleşmeden doğacak uyuşmazlıklarda, Sanayi ve Ticaret Bakanlığı'nca ilan edilen değere kadar Tüketici Hakem Heyetleri, bu değerin üzerindeki uyuşmazlıklarda ise ALICI'nın veya SATICI'nın yerleşim yerindeki Tüketici Mahkemeleri yetkilidir.</p>
+                </section>
+            </article>
+
+            <div class="contract-footer">
+                <p>Bu sözleşme elektronik ortamda onaylandığı andan itibaren taraflar arasında bağlayıcılık kazanır.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+:root {
+    --angeles-lila: #8E68AB;
+    --angeles-turkuaz: #40C1AC;
+}
+
+.page-content { padding: 60px 0; background: #fdfbff; font-family: 'Poppins', sans-serif; }
+.container { max-width: 950px; margin: 0 auto; padding: 0 20px; }
+
+/* Breadcrumb */
+.breadcrumb { margin-bottom: 30px; font-size: 0.9rem; color: #888; }
+.breadcrumb a { color: var(--angeles-lila); text-decoration: none; }
+
+/* Header */
+.contract-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+.page-title { font-size: 28px; color: #333; font-weight: 700; margin: 0; }
+.contract-badge { background: #666; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+
+/* Wrapper */
+.content-wrapper { background: #fff; padding: 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+
+/* Info Banner */
+.info-banner { background: #fff9f0; border-left: 4px solid #f39c12; padding: 20px; border-radius: 8px; display: flex; gap: 15px; align-items: flex-start; margin-bottom: 40px; }
+.info-banner i { color: #f39c12; font-size: 20px; margin-top: 3px; }
+.info-text { font-size: 0.9rem; color: #7f8c8d; line-height: 1.6; }
+
+/* Contract Sections */
+.contract-body section { margin-bottom: 40px; }
+.contract-body h2 { font-size: 1.1rem; color: var(--angeles-lila); font-weight: 700; letter-spacing: 0.5px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 20px; }
+.contract-body p { font-size: 0.95rem; line-height: 1.8; color: #555; margin-bottom: 15px; }
+
+.side-box { background: #f9f9fb; padding: 20px; border-radius: 12px; border: 1px dashed #ddd; }
+.side-box p { margin-bottom: 8px; font-size: 0.9rem; }
+
+/* Medical & Law Highlights */
+.medical-warning { background: rgba(64, 193, 172, 0.05); padding: 25px; border-radius: 15px; border: 1px solid rgba(64, 193, 172, 0.2); }
+.check-list { list-style: none; padding: 0; }
+.check-list li { padding-left: 25px; position: relative; margin-bottom: 10px; font-size: 0.9rem; color: #555; }
+.check-list li::before { content: "\f058"; font-family: "Font Awesome 5 Free"; font-weight: 900; position: absolute; left: 0; color: var(--angeles-turkuaz); }
+
+.law-highlight { background: #fcf4f4; padding: 20px; border-radius: 10px; border-left: 4px solid #e74c3c; font-style: italic; color: #c0392b; margin: 20px 0; font-size: 0.95rem; }
+
+.contract-footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 0.85rem; font-style: italic; }
+
+@media (max-width: 768px) {
+    .content-wrapper { padding: 30px 20px; }
+    .page-title { font-size: 22px; }
+}
+</style>
+{% endblock %}

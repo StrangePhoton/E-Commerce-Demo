@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hakkımızda | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<main class="page-content">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Ana Sayfa</a> <i class="fas fa-chevron-right" style="font-size: 10px; margin: 0 8px;"></i>
+            <span>Hakkımızda</span>
+        </div>
+
+        <div class="about-hero">
+            <h1 class="page-title">Hakkımızda</h1>
+            <p class="subtitle">Sağlık ve yaşam kaliteniz için güvenilir çözüm ortağınız.</p>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="about-intro">
+                <h2>{{ STORE_NAME }}'a Hoş Geldiniz</h2>
+                <div class="intro-underline"></div>
+                <p>{{ STORE_NAME }}, demo sağlık ve yaşam kalitesini artırmaya odaklanan, müşterilerine en yüksek standartlarda ürünler sunmayı hedefleyen öncü bir platformdur. {{ STORE_CITY }} merkezli demo mağazamız, dürüstlük ve şeffaflık ilkesiyle tüm Türkiye'ye hizmet vermektedir.</p>
+            </div>
+
+            <section class="about-section mission-box">
+                <div class="mission-content">
+                    <i class="fas fa-bullseye section-icon"></i>
+                    <h2>Misyonumuz</h2>
+                    <p>Müşterilerimize en kaliteli sağlık ve yaşam ürünlerini, ulaşılabilir fiyatlarla ve güvenilir bir hizmet anlayışıyla sunmak. Her bireyin daha sağlıklı, konforlu ve kaliteli bir yaşam sürmesine profesyonel çözümlerle katkıda bulunmak.</p>
+                </div>
+            </section>
+
+            <section class="about-section">
+                <h2 class="section-center-title">Değerlerimiz</h2>
+                <div class="values-grid">
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3>Müşteri Odaklılık</h3>
+                        <p>Sizin memnuniyetiniz bizim en büyük motivasyon kaynağımızdır.</p>
+                    </div>
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Güvenilirlik</h3>
+                        <p>Sertifikalı ve orijinal ürünlerle güvenli alışveriş imkanı sunuyoruz.</p>
+                    </div>
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <h3>Kalite Standartı</h3>
+                        <p>Ürün yelpazemizi en seçkin markalar ve yüksek standartlarla oluşturuyoruz.</p>
+                    </div>
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3>Sürdürülebilir Yaşam</h3>
+                        <p>Yaşam kalitesini artırırken doğaya ve insana saygıyı unutmuyoruz.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="about-section why-us">
+                <h2>Neden Bizi Seçmelisiniz?</h2>
+                <div class="why-us-grid">
+                    <ul class="info-list">
+                        <li><i class="fas fa-check-circle"></i> Geniş ve Küratörlü Ürün Yelpazesi</li>
+                        <li><i class="fas fa-check-circle"></i> Hızlı ve Özenli Paketleme</li>
+                    </ul>
+                    <ul class="info-list">
+                        <li><i class="fas fa-check-circle"></i> Orijinal Ürün Güvencesi</li>
+                        <li><i class="fas fa-check-circle"></i> Güvenli Ödeme Alt Yapısı</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="about-section contact-card">
+                <div class="contact-header">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <h2>Bize Ulaşın</h2>
+                </div>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <strong>E-posta:</strong> <span>{{ STORE_EMAIL }}</span>
+                    </div>
+                    <div class="contact-item">
+                        <strong>Telefon:</strong> <span>{{ STORE_PHONE }}</span>
+                    </div>
+                    <div class="contact-item">
+                        <strong>Adres:</strong> <span>{{ STORE_ADDRESS }}</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<style>
+:root {
+    --angeles-lila: #8E68AB;
+    --angeles-turkuaz: #40C1AC;
+    --angeles-text: #333;
+    --bg-light: #F9F7FB;
+}
+
+.page-content {
+    padding: 60px 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-light);
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    margin-bottom: 30px;
+    color: #888;
+    font-size: 14px;
+}
+.breadcrumb a {
+    color: var(--angeles-lila);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Hero Section */
+.about-hero {
+    text-align: center;
+    margin-bottom: 50px;
+}
+.page-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--angeles-text);
+    margin-bottom: 10px;
+}
+.subtitle {
+    font-size: 18px;
+    color: #666;
+}
+
+/* Content Box */
+.content-wrapper {
+    background: #fff;
+    padding: 50px;
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(142, 104, 171, 0.08);
+}
+
+.about-intro {
+    text-align: center;
+    margin-bottom: 60px;
+}
+.about-intro h2 {
+    font-size: 30px;
+    color: var(--angeles-lila);
+    margin-bottom: 15px;
+}
+.intro-underline {
+    width: 60px;
+    height: 4px;
+    background: var(--angeles-turkuaz);
+    margin: 0 auto 25px;
+    border-radius: 2px;
+}
+.about-intro p {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #555;
+}
+
+/* Mission Box */
+.mission-box {
+    background: linear-gradient(135deg, #fdfbff 0%, #f3eff7 100%);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid rgba(142, 104, 171, 0.1);
+}
+.section-icon {
+    font-size: 40px;
+    color: var(--angeles-turkuaz);
+    margin-bottom: 20px;
+}
+
+/* Values */
+.section-center-title {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 40px;
+    color: var(--angeles-text);
+}
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+}
+.value-item {
+    text-align: center;
+    padding: 35px 20px;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+.value-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border-color: var(--angeles-lila);
+}
+.value-icon {
+    font-size: 45px;
+    color: var(--angeles-lila);
+    margin-bottom: 20px;
+}
+.value-item h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: var(--angeles-text);
+}
+
+/* Why Us */
+.why-us {
+    background: #fff;
+    border-top: 1px solid #eee;
+    padding-top: 50px;
+}
+.why-us-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.info-list {
+    list-style: none;
+    padding: 0;
+}
+.info-list li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #555;
+}
+.info-list li i {
+    color: var(--angeles-turkuaz);
+}
+
+/* Contact Card */
+.contact-card {
+    background: var(--angeles-text);
+    color: white;
+    padding: 40px;
+    border-radius: 20px;
+    margin-top: 50px;
+}
+.contact-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.contact-header i { font-size: 30px; color: var(--angeles-turkuaz); }
+.contact-details {
+    display: grid;
+    gap: 15px;
+}
+.contact-item strong { color: var(--angeles-turkuaz); margin-right: 10px; }
+
+@media (max-width: 768px) {
+    .content-wrapper { padding: 30px 20px; }
+    .page-title { font-size: 32px; }
+    .why-us-grid { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}

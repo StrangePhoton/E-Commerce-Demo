@@ -1,0 +1,28 @@
+MESAFELİ SATIŞ SÖZLEŞMESİ
+
+1. TARAFLAR
+SATICI: {{ STORE_NAME }}
+ALICI: {{ user.get_full_name }}
+
+2. KONU
+Bu sözleşme, alıcının aşağıda bilgileri yer alan
+medikal ürünlerin satışı ve teslimine ilişkindir.
+
+3. ÜRÜNLER
+{% for item in items %}
+- {{ item.product.name }} | {{ item.quantity }} adet
+{% endfor %}
+
+4. BEDEL
+Toplam Sipariş Tutarı: {{ order.total_price }} TL
+
+5. CAYMA HAKKI İSTİSNASI
+Alıcı, sipariş konusu ürünlerin medikal ürün olması,
+hijyen ve sağlık sebebiyle tekrar satılamaz nitelikte
+olması nedeniyle cayma hakkının bulunmadığını kabul eder.
+
+6. YÜRÜRLÜK
+Alıcı, bu sözleşmeyi elektronik ortamda onayladığını,
+tüm maddeleri okuduğunu kabul eder.
+
+Onay Tarihi: {{ generated_at|date:"d.m.Y H:i" }}

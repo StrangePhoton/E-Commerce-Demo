@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Sözleşmeler | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+
+  <h2>Sözleşmeler</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="contract-box">
+      <h3>Ön Bilgilendirme Formu</h3>
+      <div class="contract-text">
+        {{ pre_info_text|linebreaks }}
+      </div>
+
+      <label>
+        <input type="checkbox" name="pre_info" required>
+        Ön Bilgilendirme Formunu okudum ve kabul ediyorum
+      </label>
+    </div>
+
+    <div class="contract-box">
+      <h3>Mesafeli Satış Sözleşmesi</h3>
+      <div class="contract-text">
+        {{ distance_contract_text|linebreaks }}
+      </div>
+
+      <label>
+        <input type="checkbox" name="distance_contract" required>
+        Mesafeli Satış Sözleşmesini okudum ve kabul ediyorum
+      </label>
+    </div>
+
+    <button type="submit" class="btn-primary">
+      Devam Et
+    </button>
+  </form>
+
+</div>
+{% endblock %}

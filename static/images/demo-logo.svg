@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" role="img" aria-label="Demo Health Store">
+  <rect width="320" height="80" rx="12" fill="#8E68AB"/>
+  <rect x="8" y="8" width="64" height="64" rx="10" fill="#40C1AC"/>
+  <text x="88" y="36" fill="#ffffff" font-family="Arial, sans-serif" font-size="22" font-weight="700">Demo Health</text>
+  <text x="88" y="58" fill="#f3ecff" font-family="Arial, sans-serif" font-size="16" font-weight="600">Store</text>
+</svg>

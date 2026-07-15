@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iyzico 3D Secure</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+            max-width: 480px;
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #e5e7eb;
+            border-top: 5px solid #8e68ab;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        p { color: #475569; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="spinner"></div>
+        <h2>Bankanıza Yönlendiriliyorsunuz</h2>
+        <p>Lütfen bekleyin, 3D Secure doğrulama sayfasına yönlendirileceksiniz.</p>
+        <p>Bu işlem genellikle birkaç saniye sürer.</p>
+    </div>
+    {{ html_content|safe }}
+</body>
+</html>

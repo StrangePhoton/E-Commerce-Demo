@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Sipariş Alındı{% endblock %}
+
+{% block content %}
+<div class="order-success">
+  <h1>Teşekkürler!</h1>
+  <p>Siparişiniz başarıyla alındı. Sipariş Numaranız: <strong>#{{ order.id }}</strong></p>
+  <a href="{% url 'home' %}" class="btn-primary">Ana Sayfaya Dön</a>
+</div>
+{% endblock %}

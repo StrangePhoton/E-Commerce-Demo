@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --admin-primary: #00ced1; /* Angeles Turkuaz */
+        --admin-bg: #f4f7f6;
+        --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        --input-border: #e2e8f0;
+    }
+
+    .admin-content {
+        padding: 40px;
+        background-color: var(--admin-bg);
+        min-height: 100vh;
+    }
+
+    .dashboard-title {
+        max-width: 900px;
+        margin: 0 auto 30px auto;
+        font-size: 1.8rem;
+        color: #2d3436;
+        font-weight: 800;
+    }
+
+    .form-card {
+        background: white;
+        padding: 40px;
+        border-radius: 24px;
+        box-shadow: var(--card-shadow);
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    /* Detailed Information Section - Grid Layout */
+    .product-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .product-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    /* Full width fields */
+    .full-width { grid-column: span 2; }
+
+    .product-details label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Input Modernization */
+    .product-details input, 
+    .product-details select, 
+    .product-details textarea {
+        padding: 14px 18px !important;
+        border: 2px solid var(--input-border) !important;
+        border-radius: 14px !important;
+        font-size: 0.95rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background-color: #fff;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .product-details input:focus, 
+    .product-details textarea:focus {
+        border-color: var(--admin-primary) !important;
+        box-shadow: 0 0 0 4px rgba(0, 206, 209, 0.1) !important;
+        outline: none;
+    }
+
+    /* --- Toggle Switch Style --- */
+    .status-container {
+        grid-column: span 2;
+        background: #fdfdfd;
+        padding: 18px 24px;
+        border-radius: 18px;
+        border: 2px dashed var(--admin-primary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 54px;
+        height: 28px;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #cbd5e0;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px; width: 20px;
+        left: 4px; bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider { background-color: var(--admin-primary); }
+    input:checked + .slider:before { transform: translateX(26px); }
+    /* -------------------------- */
+
+    .section-divider { margin: 40px 0 30px 0; border: 0; border-top: 2px solid #f1f5f9; }
+
+    .image-field-row {
+        background: #f8fafc;
+        border: 2px solid #f1f5f9;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        transition: transform 0.2s;
+    }
+
+    .image-preview img {
+        width: 90px; height: 90px;
+        object-fit: cover; border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .form-actions { display: flex; align-items: center; gap: 20px; margin-top: 40px; }
+
+    .btn-save-main {
+        background: linear-gradient(135deg, #00ced1 0%, #00b5b8 100%);
+        color: white; border: none;
+        padding: 16px 40px; border-radius: 16px;
+        font-weight: 700; cursor: pointer; transition: all 0.3s;
+    }
+
+    .btn-save-main:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 206, 209, 0.2); }
+
+    .btn-cancel { color: #718096; text-decoration: none; font-weight: 600; }
+</style>
+
+<div class="admin-layout">
+    {% include 'includes/admin-sidebar-include.html' %}
+
+    <main class="admin-content">
+        <h1 class="dashboard-title">{{ title }}</h1>
+
+        <div class="form-card">
+            <form method="post" enctype="multipart/form-data" id="main-product-form">
+                {% csrf_token %}
+                
+                <div class="product-details">
+                    <div class="status-container">
+                        <div>
+                            <h4 style="margin:0; color: #2d3436; font-size: 1rem;">Ürün Satış Durumu</h4>
+                            <small style="color: #718096;">Ürün pasif edilirse mağazada listelenmez.</small>
+                        </div>
+                        <label class="switch">
+                            {{ form.is_active }}
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="product-field full-width">
+                        <label>{{ form.name.label }}</label>
+                        {{ form.name }}
+                    </div>
+
+                    <div class="product-field">
+                        <label>{{ form.category.label }}</label>
+                        {{ form.category }}
+                    </div>
+
+                    <div class="product-field">
+                        <label>{{ form.price.label }}</label>
+                        {{ form.price }}
+                    </div>
+
+                    <div class="product-field full-width" id="stock-field-container">
+                        <label>{{ form.stock.label }} (Adet)</label>
+                        {{ form.stock }}
+                        <small style="color: #718096; font-size: 0.85rem; margin-top: 5px; display: block;" id="stock-help-text">
+                            Variant kullanılmıyorsa bu alan kullanılır.
+                        </small>
+                    </div>
+
+                    <div class="product-field full-width">
+                        <label>{{ form.description.label }}</label>
+                        {{ form.description }}
+                    </div>
+
+                    <!-- Size and Color Options -->
+                    <div class="status-container" style="margin-top: 10px;">
+                        <div>
+                            <h4 style="margin:0; color: #2d3436; font-size: 1rem;">Beden Seçeneği</h4>
+                            <small style="color: #718096;">Ürün için beden seçeneği var mı?</small>
+                        </div>
+                        <label class="switch">
+                            {{ form.has_sizes }}
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="status-container" style="margin-top: 10px;">
+                        <div>
+                            <h4 style="margin:0; color: #2d3436; font-size: 1rem;">Renk Seçeneği</h4>
+                            <small style="color: #718096;">Ürün için renk seçeneği var mı?</small>
+                        </div>
+                        <label class="switch">
+                            {{ form.has_colors }}
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            
+                <!-- Variant Management Section -->
+                <hr class="section-divider" id="variant-divider" style="display: none;">
+                
+                <div id="variant-section" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="margin: 0; color: #2d3436;">Ürün Varyantları (Beden/Renk Stok Yönetimi)</h3>
+                            <p style="color: #718096; font-size: 0.9rem; margin-top: 5px;">Her beden/renk kombinasyonu için ayrı stok girebilirsiniz.</p>
+                        </div>
+                        <button type="button" onclick="addVariantRow()" style="background: var(--admin-primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                            <i class="fas fa-plus"></i> Yeni Varyant Ekle
+                        </button>
+                    </div>
+
+                    <div id="variants-container">
+                        {% if product %}
+                            {% for variant in product.variants.all %}
+                            <div class="variant-row" data-variant-id="{{ variant.id }}" style="background: #f8fafc; border: 2px solid #e2e8f0; padding: 20px; margin-bottom: 15px; border-radius: 16px; display: grid; grid-template-columns: {% if product.has_sizes %}1fr {% endif %}{% if product.has_colors %}1fr {% endif %}1fr auto; gap: 15px; align-items: center;">
+                                {% if product.has_sizes %}
+                                <div>
+                                    <label style="display: block; font-weight: 600; color: #4a5568; font-size: 0.85rem; margin-bottom: 8px;">Beden</label>
+                                    <input type="text" name="variant_size_{{ variant.id }}" value="{{ variant.size }}" placeholder="Örn: S, M, L" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 10px;">
+                                </div>
+                                {% endif %}
+                                {% if product.has_colors %}
+                                <div>
+                                    <label style="display: block; font-weight: 600; color: #4a5568; font-size: 0.85rem; margin-bottom: 8px;">Renk</label>
+                                    <input type="text" name="variant_color_{{ variant.id }}" value="{{ variant.color }}" placeholder="Örn: Kırmızı, Mavi" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 10px;">
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <label style="display: block; font-weight: 600; color: #4a5568; font-size: 0.85rem; margin-bottom: 8px;">Stok</label>
+                                    <input type="number" name="variant_stock_{{ variant.id }}" value="{{ variant.stock }}" min="0" placeholder="0" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 10px;">
+                                </div>
+                                <div>
+                                    <button type="button" onclick="deleteVariant(this, {{ variant.id }})" style="background: #ff4757; color: white; border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr class="section-divider">
+                
+                <div class="image-section-header">
+                    <h3 style="margin: 0; color: #2d3436;">Ürün Görselleri</h3>
+                    <p style="color: #718096; font-size: 0.9rem; margin-top: 5px;">İlk görsel kapak olacaktır.</p>
+                </div>
+                
+                {{ formset.management_form }} 
+                <div class="image-upload-section">
+                    {% for image_form in formset %}
+                    <div class="image-field-row">
+                        {{ image_form.id }}
+                        <div class="image-info" style="flex: 1;">
+                            <span style="font-size: 0.75rem; font-weight: 800; color: var(--admin-primary); text-transform: uppercase;">Görsel: {{ forloop.counter }}</span>
+                            <div style="margin-top: 8px;">{{ image_form.image }}</div>
+                            
+                            {% if image_form.instance.pk %}
+                                <div style="margin-top: 12px;">
+                                    <div style="display: none;">{{ image_form.DELETE }}</div>
+                                    <button type="button" onclick="confirmImageDelete(this)"
+                                            style="background: #fff; color: #ff4757; border: 1.5px solid #ff4757; padding: 6px 14px; border-radius: 10px; cursor: pointer; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-trash-alt"></i> Görseli Kaldır
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    
+                        {% if image_form.instance.image %}
+                        <div class="image-preview"><img src="{{ image_form.instance.image.url }}"></div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            
+                <div class="form-actions">
+                    <button type="submit" class="btn-save-main">
+                        <i class="fas fa-save"></i> Değişiklikleri Kaydet
+                    </button>
+                    <a href="{% url 'admin-product-list' %}" class="btn-cancel">Vazgeç</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script>
+    let variantCounter = 0;
+
+    function confirmImageDelete(button) {
+        if (confirm("Bu görseli silmek istediğinize emin misiniz?")) {
+            const row = button.closest('.image-field-row');
+            const deleteCheckbox = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+            if (deleteCheckbox) {
+                deleteCheckbox.checked = true;
+                row.style.opacity = '0.4';
+                row.style.filter = 'grayscale(100%)';
+                row.style.pointerEvents = 'none';
+                button.innerHTML = '<i class="fas fa-undo"></i> Silinecek';
+            }
+        }
+    }
+
+    // Show/hide variant section based on size and color options
+    function toggleVariantSection() {
+        const hasSizes = document.getElementById('id_has_sizes').checked;
+        const hasColors = document.getElementById('id_has_colors').checked;
+        const variantSection = document.getElementById('variant-section');
+        const variantDivider = document.getElementById('variant-divider');
+        const stockField = document.getElementById('stock-field-container');
+        const stockHelpText = document.getElementById('stock-help-text');
+
+        if (hasSizes || hasColors) {
+            if (variantSection) variantSection.style.display = 'block';
+            if (variantDivider) variantDivider.style.display = 'block';
+            if (stockHelpText) {
+                stockHelpText.textContent = 'Not: Bu ürün için variant\'lar kullanılıyor. Stok bilgisi variant\'larda yönetilir.';
+                stockHelpText.style.color = '#ffa000';
+            }
+        } else {
+            if (variantSection) variantSection.style.display = 'none';
+            if (variantDivider) variantDivider.style.display = 'none';
+            if (stockHelpText) {
+                stockHelpText.textContent = 'Variant kullanılmıyorsa bu alan kullanılır.';
+                stockHelpText.style.color = '#718096';
+            }
+        }
+    }
+
+    function addVariantRow() {
+        const hasSizes = document.getElementById('id_has_sizes').checked;
+        const hasColors = document.getElementById('id_has_colors').checked;
+        const container = document.getElementById('variants-container');
+        
+        variantCounter++;
+        const variantId = 'new_' + variantCounter;
+        
+        let html = '<div class="variant-row" data-variant-id="' + variantId + '" style="background: #f8fafc; border: 2px solid #e2e8f0; padding: 20px; margin-bottom: 15px; border-radius: 16px; display: grid; grid-template-columns: ';
+        
+        let cols = [];
+        if (hasSizes) cols.push('1fr');
+        if (hasColors) cols.push('1fr');
+        cols.push('1fr', 'auto');
+        
+        html += cols.join(' ') + '; gap: 15px; align-items: center;">';
+        
+        if (hasSizes) {
+            html += '<div><label style="display: block; font-weight: 600; color: #4a5568; font-size: 0.85rem; margin-bottom: 8px;">Beden</label>';
+            html += '<input type="text" name="new_variant_size_' + variantId + '" placeholder="Örn: S, M, L" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 10px;"></div>';
+        }
+        
+        if (hasColors) {
+            html += '<div><label style="display: block; font-weight: 600; color: #4a5568; font-size: 0.85rem; margin-bottom: 8px;">Renk</label>';
+            html += '<input type="text" name="new_variant_color_' + variantId + '" placeholder="Örn: Kırmızı, Mavi" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 10px;"></div>';
+        }
+        
+        html += '<div><label style="display: block; font-weight: 600; color: #4a5568; font-size: 0.85rem; margin-bottom: 8px;">Stok</label>';
+        html += '<input type="number" name="new_variant_stock_' + variantId + '" value="0" min="0" placeholder="0" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 10px;"></div>';
+        html += '<div><button type="button" onclick="deleteVariant(this, \'' + variantId + '\')" style="background: #ff4757; color: white; border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 600;"><i class="fas fa-trash"></i></button></div>';
+        html += '</div>';
+        
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function deleteVariant(button, variantId) {
+        if (confirm('Bu varyantı silmek istediğinize emin misiniz?')) {
+            const row = button.closest('.variant-row');
+            if (variantId.toString().startsWith('new_')) {
+                // New added variant, delete directly
+                row.remove();
+            } else {
+                // Existing variant, mark for deletion
+                const form = document.getElementById('main-product-form');
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'delete_variant_' + variantId;
+                hiddenInput.value = '1';
+                form.appendChild(hiddenInput);
+                row.style.opacity = '0.4';
+                row.style.filter = 'grayscale(100%)';
+                row.style.pointerEvents = 'none';
+            }
+        }
+    }
+
+    // When the page loads and the checkbox changes
+    document.addEventListener('DOMContentLoaded', function() {
+        const hasSizesCheckbox = document.getElementById('id_has_sizes');
+        const hasColorsCheckbox = document.getElementById('id_has_colors');
+        
+        if (hasSizesCheckbox) {
+            hasSizesCheckbox.addEventListener('change', toggleVariantSection);
+        }
+        if (hasColorsCheckbox) {
+            hasColorsCheckbox.addEventListener('change', toggleVariantSection);
+        }
+        
+        toggleVariantSection();
+    });
+</script>
+{% endblock %}

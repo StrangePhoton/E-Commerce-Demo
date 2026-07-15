@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}İade Talepleri Yönetimi | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+{% include 'includes/admin-sidebar-include.html' %}
+
+<div class="admin-content">
+    <h1 class="dashboard-title">
+        <i class="fas fa-undo"></i> İade Talepleri
+    </h1>
+
+    <div class="table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ürün</th>
+                    <th>Müşteri</th>
+                    <th>Sipariş</th>
+                    <th>Miktar</th>
+                    <th>Sebep</th>
+                    <th>Durum</th>
+                    <th>Tarih</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in return_requests %}
+                    <tr>
+                        <td>#{{ request.id }}</td>
+                        <td>{{ request.order_item.product.name }}</td>
+                        <td>{{ request.user.get_full_name|default:request.user.email }}</td>
+                        <td><a href="{% url 'admin-order-list' %}" style="color: #8e68ab;">#{{ request.order.id }}</a></td>
+                        <td>{{ request.quantity }} Adet</td>
+                        <td>{{ request.get_reason_display }}</td>
+                        <td>
+                            <span class="status-badge status-{{ request.status }}">
+                                {{ request.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'admin-return-request-detail' request.id %}" class="btn-action btn-view">
+                                <i class="fas fa-eye"></i> Detay
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px; color: #636e72;">
+                            İade talebi bulunmuyor.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.status-pending { background: #fff8e1; color: #f57f17; }
+.status-approved { background: #e8f5e9; color: #2e7d32; }
+.status-received { background: #e3f2fd; color: #1976d2; }
+.status-rejected { background: #ffebee; color: #c62828; }
+.status-completed { background: #d4edda; color: #155724; }
+</style>
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --admin-primary: #8E68AB;
+        --admin-secondary: #40C1AC;
+        --admin-bg: #f4f7f6;
+        --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        --input-border: #e2e8f0;
+    }
+
+    .admin-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: calc(100vh - 90px);
+        background-color: var(--admin-bg);
+    }
+
+    .admin-content {
+        padding: 40px;
+    }
+
+    .dashboard-title {
+        font-size: 1.8rem;
+        color: #2d3436;
+        font-weight: 800;
+        margin-bottom: 30px;
+    }
+
+    .form-card {
+        background: white;
+        padding: 40px;
+        border-radius: 24px;
+        box-shadow: var(--card-shadow);
+        width: 100%;
+        max-width: 700px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 14px 18px;
+        border: 2px solid var(--input-border);
+        border-radius: 14px;
+        font-size: 0.95rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background-color: #fff;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: var(--admin-primary);
+        box-shadow: 0 0 0 4px rgba(142, 104, 171, 0.1);
+        outline: none;
+    }
+
+    .form-group .help-text {
+        font-size: 0.85rem;
+        color: #718096;
+        margin-top: 5px;
+    }
+
+    .form-group .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0 0;
+        color: #e74c3c;
+        font-size: 0.85rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-secondary) 100%);
+        color: white;
+        padding: 16px 32px;
+        border: none;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(142, 104, 171, 0.3);
+    }
+
+    .btn-cancel {
+        background: #f8f9fa;
+        color: #4a5568;
+        padding: 16px 32px;
+        border: 2px solid #e2e8f0;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    @media (max-width: 992px) {
+        .admin-layout { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="admin-layout">
+  {% include 'includes/admin-sidebar-include.html' %}
+  <main class="admin-content">
+    <h1 class="dashboard-title">{{ title }}</h1>
+
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                {{ form.product.label_tag }}
+                {{ form.product }}
+                {% if form.product.help_text %}
+                    <span class="help-text">{{ form.product.help_text }}</span>
+                {% endif %}
+                {% if form.product.errors %}
+                    {{ form.product.errors }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.quantity_threshold.label_tag }}
+                {{ form.quantity_threshold }}
+                {% if form.quantity_threshold.help_text %}
+                    <span class="help-text">{{ form.quantity_threshold.help_text }}</span>
+                {% endif %}
+                {% if form.quantity_threshold.errors %}
+                    {{ form.quantity_threshold.errors }}
+                {% endif %}
+                <span class="help-text">Bu adet ve üzeri alımlarda indirim uygulanacaktır.</span>
+            </div>
+
+            <div class="form-group">
+                {{ form.discount_percent.label_tag }}
+                {{ form.discount_percent }}
+                {% if form.discount_percent.help_text %}
+                    <span class="help-text">{{ form.discount_percent.help_text }}</span>
+                {% endif %}
+                {% if form.discount_percent.errors %}
+                    {{ form.discount_percent.errors }}
+                {% endif %}
+                <span class="help-text">İndirim yüzdesi (1-100 arası).</span>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div style="background: #fff5f5; border: 2px solid #ffe3e3; border-radius: 10px; padding: 15px; margin-bottom: 20px; color: #e74c3c;">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i> Kaydet
+                </button>
+                <a href="{% url 'admin-campaign-list' %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </div>
+        </form>
+    </div>
+  </main>
+</div>
+{% endblock %}

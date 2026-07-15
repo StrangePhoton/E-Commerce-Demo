@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ön Bilgilendirme Formu | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<main class="page-content">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Ana Sayfa</a> <i class="fas fa-chevron-right" style="font-size: 10px; margin: 0 8px; opacity: 0.5;"></i>
+            <span>Ön Bilgilendirme Formu</span>
+        </div>
+
+        <div class="form-header">
+            <h1 class="page-title">Ön Bilgilendirme Formu</h1>
+            <span class="law-tag">6502 Sayılı Kanun Uyarınca</span>
+        </div>
+
+        <div class="content-wrapper shadow-sm">
+            <div class="dynamic-alert">
+                <i class="fas fa-edit"></i>
+                <div class="alert-body">
+                    <strong>Bilgilendirme:</strong> Bu alan genel bilgilendirme amaçlıdır. Siparişiniz tamamlanmadan önce, sepetinizdeki ürünler ve güncel bilgilerinizle harmanlanarak size özel bir form haline getirilecektir.
+                </div>
+            </div>
+
+            <article class="form-body">
+                <section class="info-group">
+                    <h2><i class="fas fa-building"></i> 1. SATICI BİLGİLERİ</h2>
+                    <div class="vendor-card">
+                        <p><strong>Unvan:</strong> {{ STORE_LEGAL_NAME }}</p>
+                        <p><strong>Adres:</strong> {{ STORE_ADDRESS }}</p>
+                        <p><strong>E-posta:</strong> {{ STORE_LEGAL_EMAIL }}</p>
+                        <p><strong>MERSİS / Vergi No:</strong> {{ STORE_MERSIS }} / {{ STORE_TAX_NUMBER }}</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2><i class="fas fa-shopping-basket"></i> 2. ÜRÜN VE ÖDEME BİLGİLERİ</h2>
+                    <p>Sözleşme konusu ürünün adı, miktarı, KDV dahil satış fiyatı ve ödeme bilgilerine dair detaylar sipariş özetinde yer almaktadır. Sipariş onaylandığı anda bu bilgiler kesinleşmiş kabul edilir.</p>
+                </section>
+
+                <section class="medical-focus">
+                    <h2><i class="fas fa-hand-holding-medical"></i> 3. MEDİKAL ÜRÜNLER VE CAYMA HAKKI</h2>
+                    <p>Satın alacağınız ürünler <strong>sağlık, hijyen ve kişisel koruma</strong> kapsamında olabilir. Bu tür ürünlerde:</p>
+                    <div class="important-note">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Ambalajı, mührü veya koruyucu paketi açılmış olan medikal ürünlerin (maske, nebulizatör setleri, hijyenik sarf malzemeleri vb.) iadesi ve cayma hakkı kullanımı <strong>yasal olarak mümkün değildir.</strong></span>
+                    </div>
+                </section>
+
+                <section>
+                    <h2><i class="fas fa-truck"></i> 4. TESLİMAT ŞARTLARI</h2>
+                    <p>Siparişler, stok durumuna göre 1-3 iş günü içerisinde kargoya verilir. Yasal azami teslim süresi 30 gündür. Mücbir sebeplerden kaynaklı gecikmelerde ALICI'ya bilgilendirme yapılır.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-gavel"></i> 5. ŞİKAYET VE İTİRAZ</h2>
+                    <p>Tüketici, şikayet ve itirazları konusundaki başvurularını, T.C. Ticaret Bakanlığı tarafından her yıl belirlenen parasal sınırlar dahilinde tüketicinin mal veya hizmeti satın aldığı veya ikametgahının bulunduğu yerdeki <strong>Tüketici Hakem Heyetine</strong> veya <strong>Tüketici Mahkemesine</strong> yapabilir.</p>
+                </section>
+            </article>
+
+            <div class="form-footer">
+                <p>İşbu form, Mesafeli Sözleşmeler Yönetmeliği uyarınca alıcıyı bilgilendirme amacıyla düzenlenmiştir.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+:root {
+    --angeles-lila: #8E68AB;
+    --angeles-turkuaz: #40C1AC;
+}
+
+.page-content { padding: 60px 0; background: #fdfbff; font-family: 'Poppins', sans-serif; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+/* Header */
+.form-header { margin-bottom: 35px; border-bottom: 3px solid var(--angeles-lila); padding-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end; }
+.page-title { font-size: 28px; color: #333; font-weight: 700; margin: 0; }
+.law-tag { font-size: 0.8rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Content Wrapper */
+.content-wrapper { background: #fff; padding: 45px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); }
+
+/* Alert Box */
+.dynamic-alert { background: #f4eff7; padding: 20px; border-radius: 12px; display: flex; gap: 15px; align-items: center; margin-bottom: 40px; border: 1px solid rgba(142, 104, 171, 0.1); }
+.dynamic-alert i { color: var(--angeles-lila); font-size: 24px; }
+.alert-body { font-size: 0.9rem; color: #555; line-height: 1.5; }
+
+/* Sections */
+section { margin-bottom: 40px; }
+section h2 { font-size: 1.1rem; color: var(--angeles-lila); font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+section h2 i { color: var(--angeles-turkuaz); font-size: 1.2rem; }
+section p { font-size: 0.95rem; line-height: 1.8; color: #666; }
+
+/* Vendor Card */
+.vendor-card { background: #f9f9fb; padding: 20px; border-radius: 10px; border-left: 4px solid var(--angeles-turkuaz); }
+.vendor-card p { margin-bottom: 5px; color: #444; }
+
+/* Medical Important Note */
+.medical-focus { background: rgba(64, 193, 172, 0.03); padding: 25px; border-radius: 15px; }
+.important-note { background: #fff; border: 1px solid #ffebeb; padding: 15px; border-radius: 10px; display: flex; gap: 12px; align-items: flex-start; margin-top: 15px; }
+.important-note i { color: #e74c3c; margin-top: 4px; }
+.important-note span { font-size: 0.9rem; color: #c0392b; font-weight: 500; }
+
+.form-footer { border-top: 1px solid #eee; padding-top: 25px; text-align: center; color: #aaa; font-size: 0.8rem; font-style: italic; }
+
+@media (max-width: 768px) {
+    .content-wrapper { padding: 25px; }
+    .page-title { font-size: 22px; }
+    .form-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+</style>
+{% endblock %}

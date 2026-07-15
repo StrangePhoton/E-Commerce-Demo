@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ STORE_NAME }}{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static STORE_LOGO %}">
+    <link rel="shortcut icon" type="image/png" href="{% static STORE_LOGO %}">
+    <link rel="apple-touch-icon" href="{% static STORE_LOGO %}">
+
+    <!-- Open Graph / Facebook / Social Media Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}{{ STORE_NAME }} - Demo Sağlık Ürünleri{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Sağlık ve yaşam kalitenizi artırmak için profesyonel çözümler sunan güvenilir adresiniz. Medikal ürünler, elektronik cihazlar ve daha fazlası.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static STORE_LOGO %}{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:site_name" content="{{ STORE_NAME }}">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ STORE_NAME }} - Demo Sağlık Ürünleri{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Sağlık ve yaşam kalitenizi artırmak için profesyonel çözümler sunan güvenilir adresiniz.{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static STORE_LOGO %}{% endblock %}">
+
+    <!-- General Meta Tags -->
+    <meta name="description" content="{% block meta_description %}{{ STORE_NAME }} - Demo sağlık mağazası artırmak için profesyonel çözümler sunan güvenilir adresiniz. Medikal ürünler, elektronik cihazlar ve daha fazlası.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}medikal ürünler, sağlık ürünleri, elektronik cihazlar, hasta bakım malzemeleri, demo mağaza{% endblock %}">
+    <meta name="author" content="{{ STORE_NAME }}">
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/category.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product-detail.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --angeles-lila: #8e68ab;
+            --angeles-turkuaz: #69b3a2;
+            --angeles-yesil: #c5d9a4;
+            --angeles-text: #3d4c6d;
+        }
+
+        /* Footer to the bottom */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9fbfa;
+            color: var(--angeles-text);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Content area fills the space */
+        main {
+            flex: 1 0 auto;
+        }
+
+        /* Footer to keep its width */
+        footer {
+            flex-shrink: 0;
+        }
+
+        /* Menu Blur (Overlay) Style */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 998;
+        }
+
+        .menu-overlay.show {
+            display: block;
+        }
+
+        /* Grid structure to force */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            /* Sidebar 280px, content the rest */
+            min-height: calc(100vh - 85px);
+            background-color: #f4f7f6;
+            align-items: start;
+            /* Prevent the content from extending beyond the sidebar */
+        }
+
+        .admin-sidebar {
+            background: white;
+            padding: 30px 20px;
+            border-right: 1px solid #eee;
+            height: 100%;
+            /* Layout to match the height */
+            min-height: calc(100vh - 85px);
+        }
+
+        /* Styles for links and headers */
+        .admin-sidebar h2 {
+            font-size: 1.1rem;
+            color: #8E68AB;
+            margin-bottom: 25px;
+            padding-left: 10px;
+            border-left: 4px solid #8E68AB;
+            text-transform: uppercase;
+        }
+
+        .admin-sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .admin-sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: #2d3436;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .admin-sidebar ul li a:hover,
+        .admin-sidebar ul li a.active {
+            background: #f3f0f7;
+            color: #8E68AB;
+        }
+
+        /* Prevent the content from overflowing */
+        .admin-content {
+            padding: 40px;
+            overflow-x: hidden;
+        }
+        /* Message Boxes Style */
+.messages-container {
+    max-width: 1200px;
+    margin: 20px auto 0;
+    padding: 0 20px;
+    z-index: 1001;
+}
+
+.alert-box {
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    animation: slideDown 0.5s ease-out;
+}
+
+.alert-box.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 5px solid #4caf50;
+}
+
+.alert-box.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 5px solid #f44336;
+}
+
+.alert-box.warning {
+    background-color: #fffde7;
+    color: #fbc02d;
+    border-left: 5px solid #ffeb3b;
+}
+
+.alert-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.close-alert {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.5;
+    transition: 0.3s;
+}
+
+.close-alert:hover {
+    opacity: 1;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    {% include 'components/header.html' %}
+
+    <main>
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert-box {{ message.tags }}">
+                <div class="alert-content">
+                    {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle"></i>
+                    {% else %}
+                        <i class="fas fa-info-circle"></i>
+                    {% endif %}
+                    <span>{{ message }}</span>
+                </div>
+                <button class="close-alert" onclick="this.parentElement.remove();">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'components/footer.html' %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select all message boxes
+            const alerts = document.querySelectorAll('.alert-box');
+            
+            alerts.forEach(function(alert) {
+                // Close after 5 seconds with fade-out effect
+                setTimeout(function() {
+                    alert.style.transition = "opacity 0.5s ease";
+                    alert.style.opacity = "0";
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                }, 5000);
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

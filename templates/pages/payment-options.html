@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ödeme Seçenekleri | {{ STORE_NAME }}{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<main class="page-content">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Ana Sayfa</a> <i class="fas fa-chevron-right" style="font-size: 10px; margin: 0 8px;"></i>
+            <span>Ödeme Seçenekleri</span>
+        </div>
+
+        <div class="payment-hero">
+            <h1 class="page-title">Güvenli Ödeme Seçenekleri</h1>
+            <p class="subtitle">Tüm alışverişleriniz 256-bit SSL sertifikası ile uçtan uca korunmaktadır.</p>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="payment-methods-grid" style="display: flex; justify-content: center;">
+                <div class="payment-card highlight-card" style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="payment-icon lila-bg" style="display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <h3>Kredi / Banka Kartı</h3>
+                        <p><strong>Iyzico</strong> güvencesiyle tüm banka kartlarınızla ödeme yapabilirsiniz.</p>
+                        
+                        <div class="pos-partners" style="justify-content: center;">
+                            <span class="partner-badge">Iyzico Korumalı Alışveriş</span>
+                        </div>
+
+                        <ul class="card-types" style="justify-content: center;">
+                            <li><i class="fab fa-cc-visa"></i> Visa</li>
+                            <li><i class="fab fa-cc-mastercard"></i> Mastercard</li>
+                            <li><i class="fas fa-credit-card"></i> Troy</li>
+                        </ul>
+                        <div class="card-footer-info">
+                            <i class="fas fa-shield-check"></i> 3D Secure Tam Koruma
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="security-banner">
+                <div class="security-content">
+                    <div class="shield-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="security-text">
+                        <h2>%100 Güvenli Alışveriş</h2>
+                        <p>Kredi kartı bilgileriniz kesinlikle sistemimizde saklanmaz. Ödeme işlemleriniz doğrudan <strong>Iyzico</strong> güvenli ödeme altyapısı üzerinden şifrelenmiş olarak gerçekleşir.</p>
+                    </div>
+                </div>
+                <div class="security-logos">
+                    <i class="fab fa-cc-stripe"></i> <i class="fas fa-lock"></i>
+                    <span>SSL SECURED</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+:root {
+    --angeles-lila: #8E68AB;
+    --angeles-turkuaz: #40C1AC;
+    --angeles-text: #333;
+    --bg-light: #FBF9FF;
+}
+
+.page-content {
+    padding: 60px 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-light);
+}
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* Hero Section */
+.payment-hero { text-align: center; margin-bottom: 50px; }
+.page-title { font-size: 38px; color: var(--angeles-text); font-weight: 700; margin-bottom: 10px; }
+.subtitle { color: #666; font-size: 1.1rem; }
+
+/* Wrapper */
+.content-wrapper {
+    background: #fff;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+}
+
+/* Payment Cards Grid */
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.payment-card {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    padding: 35px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.payment-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(142, 104, 171, 0.1);
+    border-color: var(--angeles-lila);
+}
+
+.payment-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    margin-bottom: 25px;
+}
+
+.lila-bg { background: var(--angeles-lila); }
+.turkuaz-bg { background: var(--angeles-turkuaz); }
+
+.payment-card h3 { font-size: 20px; margin-bottom: 15px; color: var(--angeles-text); font-weight: 600; }
+.payment-card p { font-size: 0.95rem; color: #666; line-height: 1.6; margin-bottom: 20px; }
+
+/* Partner Badges */
+.pos-partners { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.partner-badge {
+    background: #f3eff7;
+    color: var(--angeles-lila);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Card Types */
+.card-types { list-style: none; padding: 0; display: flex; gap: 15px; margin-bottom: 20px; }
+.card-types li { font-size: 1.2rem; color: #ccc; transition: 0.3s; }
+.payment-card:hover .card-types li { color: var(--angeles-text); }
+
+.card-footer-info {
+    font-size: 0.85rem;
+    color: #2ecc71;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: auto;
+}
+
+/* Alert Boxes */
+.alert-box {
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    display: flex;
+    gap: 10px;
+}
+.alert-box.info { background: #eef9f8; color: #2d7d74; }
+.alert-box.warning { background: #fff8e1; color: #a18100; }
+
+/* Security Banner */
+.security-banner {
+    background: #f8f9fa;
+    border-radius: 20px;
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #eee;
+}
+
+.security-content { display: flex; gap: 25px; align-items: center; max-width: 70%; }
+.shield-icon { font-size: 50px; color: var(--angeles-turkuaz); }
+.security-text h2 { font-size: 22px; margin-bottom: 10px; color: var(--angeles-text); }
+.security-text p { font-size: 0.95rem; color: #777; margin: 0; }
+
+.security-logos { display: flex; flex-direction: column; align-items: center; gap: 10px; color: #bbb; }
+.security-logos span { font-size: 0.75rem; font-weight: 700; }
+
+@media (max-width: 768px) {
+    .content-wrapper { padding: 25px; }
+    .security-banner { flex-direction: column; text-align: center; }
+    .security-content { flex-direction: column; max-width: 100%; margin-bottom: 30px; }
+}
+</style>
+{% endblock %}
