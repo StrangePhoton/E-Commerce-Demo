@@ -23,6 +23,40 @@ All company names, contact details, legal texts, and customer data are **placeho
 
 ---
 
+## Screenshots
+
+### Storefront
+Homepage with category navigation, hero slider, and featured products.
+
+![Homepage](portfolio/01-homepage.png)
+
+### Product Catalog
+Category listing with price filters and product cards.
+
+![Category listing](portfolio/02-category-listing.png)
+
+### Product Detail
+Product page with ratings, stock status, and add-to-cart flow.
+
+![Product detail](portfolio/03-product-detail.png)
+
+### Customer Profile
+User dashboard with profile details and order history.
+
+![Customer profile](portfolio/04-customer-profile.png)
+
+### Admin Dashboard
+Management panel with KPI cards, sales charts, and order status overview.
+
+![Admin dashboard](portfolio/05-admin-dashboard.png)
+
+### Admin Analytics
+Revenue metrics, best-selling products, and operational statistics.
+
+![Admin analytics](portfolio/06-admin-analytics.png)
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
